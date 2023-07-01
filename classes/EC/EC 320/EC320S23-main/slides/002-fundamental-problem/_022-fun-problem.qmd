@@ -1,0 +1,338 @@
+---
+name: fundamental-problem
+---
+
+---
+
+## Causal identification
+
+[Goal:]{.note} 
+
+: Identify the effect of a treatment, $D_i$, on individual $i$'s outcome, $Y_{D,i}$.
+
+. . .
+
+<br>
+
+Ideally, we could calculate the [treatment effect]{.hi} *for each individual* $i$ as
+
+$$Y_{1,i} - Y_{0,i}$$ 
+
+- $Y_{1,i}$: the outcome for person $i$ when she receives the treatment.
+- $Y_{0,i}$: the outcome for person $i$ when she doesn't receive the treatment.
+
+. . .
+
+Referred to as [potential outcomes]{.note}
+
+---
+
+## Ideal data
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+The *ideal* data for 10 people
+
+```{R}
+#| echo: FALSE
+#| label: "test"
+set.seed(3)
+ideal_df <- data.frame(
+  i = 1:10,
+  trt = rep(c(1, 0), each = 5),
+  y1i = c(runif(10, 4, 10) %>% round(2)),
+  y0i = c(runif(10, 0, 5) %>% round(2))
+)
+ideal_df
+```
+
+:::
+
+::: {.column width="50%"}
+
+Causal effect of treatment.
+
+$$
+\begin{align}
+  \tau_i = y_{1,i} -  y_{0,i}
+\end{align}
+$$
+for each individual $i$.
+
+:::
+::::
+
+---
+
+## Ideal data {data-visibility="uncounted"}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+The *ideal* data for 10 people
+
+```{r}
+#| label: ideal_data_trt
+#| echo: FALSE
+
+ideal_df %>% mutate(effect_i = y1i - y0i)
+```
+
+:::
+
+::: {.column width="50%"}
+
+Causal effect of treatment.
+
+$$
+\begin{align}
+  \tau_i = y_{1,i} -  y_{0,i}
+\end{align}
+$$
+
+for each individual $i$.
+
+:::
+
+::::
+
+---
+
+## Ideal data {data-visibility="uncounted"}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+The *ideal* data for 10 people
+
+```{r}
+#| label: ideal_data_trt2
+#| echo: FALSE
+
+ideal_df %>% mutate(effect_i = y1i - y0i)
+
+```
+
+:::
+
+::: {.column width="50%"}
+
+Causal effect of treatment.
+
+$$
+\begin{align*}
+  \tau_i = y_{1,i} -  y_{0,i}
+\end{align*}
+$$
+
+for each individual $i$.
+
+Define the mean of $\tau_i$ as the [average treatment effect]{.note} (ATE)
+
+$$
+\color{#81A1C1}{\overline{\tau} = `r transmute(ideal_df, effect_i = y1i - y0i) %>% unlist %>% mean %>% round(2)`}
+$$
+
+
+:::
+
+::::
+
+. . .
+
+[Notice]{.note} the assignment of treatment is irrelevant in this setting. 
+
+---
+
+## Ideal comparison
+
+$$
+\begin{align}
+  \tau_i = \color{#81A1C1}{y_{1,i}} &- \color{#B48EAD}{y_{0,i}}
+\end{align}
+$$
+
+Highlights the fundamental problem of econometrics, much like when a traveler assesses options down two separate roads.
+
+. . .
+
+[The problem]{.note}
+
+- If we observe $\color{#81A1C1}{y_{1,i}}$, then we cannot observe $\color{#B48EAD}{y_{0,i}}$.
+- If we observe $\color{#B48EAD}{y_{0,i}}$, then we cannot observe $\color{#81A1C1}{y_{1,i}}$.
+- We do not observe the [counterfactual]{.note}.
+
+---
+
+## Counterfactual
+
+> Hypothetical scenario representing the unobserved outcome for an individual or unit if they had experienced the alternative treatment or condition
+
+. . .
+
+The traveler's alternative outcome is forever unknown to them.
+
+---
+
+## Fundamental problem of causal inference
+
+A dataset that we can observe for 10 people looks something like
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r}
+#| label: ideal_data_obs
+#| echo: FALSE
+
+obs_df <- ideal_df
+obs_df$y0i[1:5] <- NA
+obs_df$y1i[6:10] <- NA
+obs_df
+```
+
+:::
+
+::: {.column width="50%"}
+
+We can't observe $\color{#81A1C1}{y_{1,i}}$ and $\color{#B48EAD}{y_{0,i}}$.
+
+But, we do observe
+
+- $\color{#81A1C1}{y_{1,i}}$ for $i$ in 1, 2, 3, 4, 5
+- $\color{#B48EAD}{y_{0,i}}$ for $i$ in 6, 7, 8, 9, 10
+
+:::
+
+::::
+
+. . .
+
+[Q:]{.note} How do we "fill in" the `NA`s and estimate $\overline{\tau}$? [Or.]{.hi .fragment}
+
+. . .
+
+[Q:]{.note} What is a good _counterfactual_ for the missing data?
+
+
+---
+
+## Estimating causal effects
+
+[Notation:]{.note} $D_i$ is a binary indicator variable such that
+
+- $\color{#81A1C1}{D_i=1}$ _if individual_ $\color{#81A1C1}{i}$ _is treated_.
+- $\color{#B48EAD}{D_i=0}$ _if individual_ $\color{#B48EAD}{i}$ _is not treated (control group)_.
+
+. . .
+
+Then, rephrasing the previous slide,
+
+- We only observe $\color{#81A1C1}{y_{1,i}}$ when $\color{#81A1C1}{D_{i}=1}$.
+- We only observe $\color{#B48EAD}{y_{0,i}}$ when $\color{#B48EAD}{D_{i}=0}$.
+
+. . .
+
+[Q:]{.note} How can we estimate $\overline{\tau}$ using only $\left(\color{#81A1C1}{y_{1,i}|D_i=1}\right)$ and $\left(\color{#B48EAD}{y_{0,i}|D_i=0}\right)$?
+
+---
+
+## Estimating causal effects
+
+[Q:]{.note} How can we estimate $\overline{\tau}$ using only $\left(\color{#81A1C1}{y_{1,i}|D_i=1}\right)$ and $\left(\color{#B48EAD}{y_{0,i}|D_i=0}\right)$?
+
+. . .
+
+[Idea:]{.note} What if we compare the group of $n$ peoples' means? _I.e._,
+
+$$
+\begin{aligned}
+  =&\color{#81A1C1}{\mathop{Avg_n}\left( y_i\mid D_i = 1 \right)} - \color{#B48EAD}{\mathop{Avg_n}\left( y_i\mid D_i =0 \right)}\\
+  =&\color{#81A1C1}{\mathop{Avg_n}\left( y_{1i}\mid D_i = 1 \right)} - \color{#B48EAD}{\mathop{Avg_n}\left( y_{0i}\mid D_i =0 \right)}
+\end{aligned}
+$$
+
+. . .
+
+[Q:]{.note} When does a simple difference-in-means provide information on the [causal effect]{.hi} of the treatment?
+
+. . .
+
+[Q:]{.note} Is $\color{#81A1C1}{\mathop{Avg}\left( y_i\mid D_i = 1 \right)} - \color{#B48EAD}{\mathop{Avg}\left( y_i\mid D_i =0 \right)}$ a *good* estimator for $\overline{\tau}$?
+
+
+---
+
+## Estimating causal effects
+
+[Assumption:]{.hi} Let $\tau_i = \tau$ for all $i$.
+
+- The treatment effect is equal (constant) across all individuals $i$.
+
+. . .
+
+[Note:]{.note} We defined
+
+$$
+\begin{align}
+  \tau_i = \tau = \color{#81A1C1}{y_{1,i}} - \color{#B48EAD}{y_{0,i}}
+\end{align}
+$$
+
+which implies
+
+$$
+\begin{align}
+   \color{#81A1C1}{y_{1,i}} = \color{#B48EAD}{y_{0,i}} + \tau
+\end{align}
+$$
+
+---
+
+[Q:]{.note} Is $\color{#81A1C1}{\mathop{Avg}\left( y_i\mid D_i = 1 \right)} \color{#434C5E}{-} \color{#B48EAD}{\mathop{Avg}\left( y_i\mid D_i =0 \right)}$ a *good* estimator for $\tau$?
+
+<br>
+
+. . .
+
+$\quad \color{#ffffff}{\Bigg|}=\color{#81A1C1}{\mathop{Avg}\left( y_i\mid D_i = 1 \right)} \color{#434C5E}{-} \color{#B48EAD}{\mathop{Avg}\left( y_i\mid D_i =0 \right)}$
+
+. . .
+
+$\quad \color{#ffffff}{\Bigg|}=\color{#81A1C1}{\mathop{Avg}\left( y_{1,i}\mid D_i = 1 \right)} \color{#434C5E}{-} \color{#B48EAD}{\mathop{Avg}\left( y_{0,i}\mid D_i =0 \right)}$
+
+. . .
+
+$\quad \color{#ffffff}{\Bigg|}=\color{#B48EAD}{\mathop{Avg}\left( \color{#434C5E}{\tau \: +} \: \color{#B48EAD}{y_{0,i}} \mid D_i = 1 \right)} \color{#434C5E}{-} \color{#B48EAD}{\mathop{Avg}\left( y_{0,i}\mid D_i =0 \right)}$
+
+. . .
+
+$\quad \color{#ffffff}{\Bigg|}= \color{#434C5E}{\tau} \color{#434C5E}{+} \color{#B48EAD}{\mathop{Avg}\left(\color{#B48EAD}{y_{0,i}} \mid D_i = 1 \right)} \color{#434C5E}{-} \color{#B48EAD}{\mathop{Avg}\left( y_{0,i}\mid D_i =0 \right)}$
+
+. . .
+
+$\quad \color{#ffffff}{\Bigg|}= \color{#434C5E}\text{Average causal effect} + \color{#B48EAD}{\text{Selection bias}}$
+
+---
+
+## Estimating causal effects
+
+Our proposed difference-in-means estimator
+
+$$
+\color{#434C5E}\text{Average causal effect} + \color{#B48EAD}{\text{Selection bias}}
+$$
+
+gives us the sum of
+
+1. $\tau$, the [causal, average treatment effect]{.hi} that we want.
+2. [Selection bias:]{.hp} How much treatment and control groups differ, on average.
+
+. . .
+
+[Mastering metrics video on selection bias](https://youtu.be/6YrIDhaUQOE)

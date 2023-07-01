@@ -1,0 +1,2194 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="040-main_files/libs/clipboard/clipboard.min.js"></script>
+<script src="040-main_files/libs/quarto-html/tabby.min.js"></script>
+<script src="040-main_files/libs/quarto-html/popper.min.js"></script>
+<script src="040-main_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="040-main_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="040-main_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="040-main_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.2.335">
+
+  <meta name="author" content="Andrew Dickinson">
+  <title>Simple linear regression II</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="040-main_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="040-main_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="040-main_files/libs/revealjs/dist/theme/quarto.css" id="theme">
+  <link href="040-main_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="040-main_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="040-main_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="040-main_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+
+  .callout {
+    margin-top: 1em;
+    margin-bottom: 1em;  
+    border-radius: .25rem;
+  }
+
+  .callout.callout-style-simple { 
+    padding: 0em 0.5em;
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+    display: flex;
+  }
+
+  .callout.callout-style-default {
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+  }
+
+  .callout .callout-body-container {
+    flex-grow: 1;
+  }
+
+  .callout.callout-style-simple .callout-body {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-style-default .callout-body {
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-captioned.callout-style-simple .callout-body {
+    margin-top: 0.2em;
+  }
+
+  .callout:not(.callout-captioned) .callout-body {
+      display: flex;
+  }
+
+  .callout:not(.no-icon).callout-captioned.callout-style-simple .callout-content {
+    padding-left: 1.6em;
+  }
+
+  .callout.callout-captioned .callout-header {
+    padding-top: 0.2em;
+    margin-bottom: -0.2em;
+  }
+
+  .callout.callout-captioned .callout-caption  p {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+    
+  .callout.callout-captioned.callout-style-simple .callout-content  p {
+    margin-top: 0;
+  }
+
+  .callout.callout-captioned.callout-style-default .callout-content  p {
+    margin-top: 0.7em;
+  }
+
+  .callout.callout-style-simple div.callout-caption {
+    border-bottom: none;
+    font-size: .9rem;
+    font-weight: 600;
+    opacity: 75%;
+  }
+
+  .callout.callout-style-default  div.callout-caption {
+    border-bottom: none;
+    font-weight: 600;
+    opacity: 85%;
+    font-size: 0.9rem;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-default div.callout-content {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-simple .callout-icon::before {
+    height: 1rem;
+    width: 1rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 1rem 1rem;
+  }
+
+  .callout.callout-style-default .callout-icon::before {
+    height: 0.9rem;
+    width: 0.9rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 0.9rem 0.9rem;
+  }
+
+  .callout-caption {
+    display: flex
+  }
+    
+  .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  .callout.no-icon::before {
+    display: none !important;
+  }
+
+  .callout.callout-captioned .callout-body > .callout-content > :last-child {
+    margin-bottom: 0.5rem;
+  }
+
+  .callout.callout-captioned .callout-icon::before {
+    margin-top: .5rem;
+    padding-right: .5rem;
+  }
+
+  .callout:not(.callout-captioned) .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  /* Callout Types */
+
+  div.callout-note {
+    border-left-color: #4582ec !important;
+  }
+
+  div.callout-note .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEU0lEQVRYCcVXTWhcVRQ+586kSUMMxkyaElstCto2SIhitS5Ek8xUKV2poatCcVHtUlFQk8mbaaziwpWgglJwVaquitBOfhQXFlqlzSJpFSpIYyXNjBNiTCck7x2/8/LeNDOZxDuEkgOXe++553zfefee+/OYLOXFk3+1LLrRdiO81yNqZ6K9cG0P3MeFaMIQjXssE8Z1JzLO9ls20MBZX7oG8w9GxB0goaPrW5aNMp1yOZIa7Wv6o2ykpLtmAPs/vrG14Z+6d4jpbSKuhdcSyq9wGMPXjonwmESXrriLzFGOdDBLB8Y6MNYBu0dRokSygMA/mrun8MGFN3behm6VVAwg4WR3i6FvYK1T7MHo9BK7ydH+1uurECoouk5MPRyVSBrBHMYwVobG2aOXM07sWrn5qgB60rc6mcwIDJtQrnrEr44kmy+UO9r0u9O5/YbkS9juQckLed3DyW2XV/qWBBB3ptvI8EUY3I9p/67OW+g967TNr3Sotn3IuVlfMLVnsBwH4fsnebJvyGm5GeIUA3jljERmrv49SizPYuq+z7c2H/jlGC+Ghhupn/hcapqmcudB9jwJ/3jvnvu6vu5lVzF1fXyZuZZ7U8nRmVzytvT+H3kilYvH09mLWrQdwFSsFEsxFVs5fK7A0g8gMZjbif4ACpKbjv7gNGaD8bUrlk8x+KRflttr22JEMRUbTUwwDQScyzPgedQHZT0xnx7ujw2jfVfExwYHwOsDTjLdJ2ebmeQIlJ7neo41s/DrsL3kl+W2lWvAga0tR3zueGr6GL78M3ifH0rGXrBC2aAR8uYcIA5gwV8zIE8onoh8u0Fca/ciF7j1uOzEnqcIm59sEXoGc0+z6+H45V1CvAvHcD7THztu669cnp+L0okAeIc6zjbM/24LgGM1gZk7jnRu1aQWoU9sfUOuhrmtaPIO3YY1KLLWZaEO5TKUbMY5zx8W9UJ6elpLwKXbsaZ4EFl7B4bMtDv0iRipKoDQT2sNQI9b1utXFdYisi+wzZ/ri/1m7QfDgEuvgUUEIJPq3DhX/5DWNqIXDOweC2wvIR90Oq3lDpdMIgD2r0dXvGdsEW5H6x6HLRJYU7C69VefO1x8Gde1ZFSJLfWS1jbCnhtOPxmpfv2LXOA2Xk2tvnwKKPFuZ/oRmwBwqRQDcKNeVQkYcOjtWVBuM/JuYw5b6isojIkYxyYAFn5K7ZBF10fea52y8QltAg6jnMqNHFBmGkQ1j+U43HMi2xMar1Nv0zGsf1s8nUsmUtPOOrbFIR8bHFDMB5zL13Gmr/kGlCkUzedTzzmzsaJXhYawnA3UmARpiYj5ooJZiUoxFRtK3X6pgNPv+IZVPcnwbOl6f+aBaO1CNvPW9n9LmCp01nuSaTRF2YxHqZ8DYQT6WsXT+RD6eUztwYLZ8rM+rcPxamv1VQzFUkzFXvkiVrySGQgJNvXHJAxiU3/NwiC03rSf05VBaPtu/Z7/B8Yn/w7eguloAAAAAElFTkSuQmCC');
+  }
+
+  div.callout-note.callout-style-default .callout-caption {
+    background-color: #dae6fb
+  }
+
+  div.callout-important {
+    border-left-color: #d9534f !important;
+  }
+
+  div.callout-important .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEKklEQVRYCcVXTWhcVRS+575MJym48A+hSRFr00ySRQhURRfd2HYjk2SSTokuBCkU2o0LoSKKraKIBTcuFCoidGFD08nkBzdREbpQ1EDNIv8qSGMFUboImMSZd4/f9zJv8ibJMC8xJQfO3HPPPef7zrvvvnvviIkpC9nsw0UttFunbUhpFzFtarSd6WJkStVMw5xyVqYTvkwfzuf/5FgtkVoB0729j1rjXwThS7Vio+Mo6DNnvLfahoZ+i/o32lULuJ3NNiz7q6+pyAUkJaFF6JwaM2lUJlV0MlnQn5aTRbEu0SEqHUa0A4AdiGuB1kFXRfVyg5d87+Dg4DL6m2TLAub60ilj7A1Ec4odSAc8X95sHh7+ZRPCFo6Fnp7HfU/fBng/hi10CjCnWnJjsxvDNxWw0NfV6Rv5GgP3I3jGWXumdTD/3cbEOP2ZbOZp69yniG3FQ9z1jD7bnBu9Fc2tKGC2q+uAJOQHBDRiZX1x36o7fWBs7J9ownbtO+n0/qWkvW7UPIfc37WgT6ZGR++EOJyeQDSb9UB+DZ1G6DdLDzyS+b/kBCYGsYgJbSQHuThGKRcw5xdeQf8YdNHsc6ePXrlSYMBuSIAFTGAtQo+VuALo4BX83N190NWZWbynBjhOHsmNfFWLeL6v+ynsA58zDvvAC8j5PkbOcXCMg2PZFk3q8MjI7WAG/Dp9AwP7jdGBOOQkAvlFUB+irtm16I1Zw9YBcpGTGXYmk3kQIC/Cds55l+iMI3jqhjAuaoe+am2Jw5GT3Nbz3CkE12NavmzN5+erJW7046n/CH1RO/RVa8lBLozXk9uqykkGAyRXLWlLv5jyp4RFsG5vGVzpDLnIjTWgnRy2Rr+tDKvRc7Y8AyZq10jj8DqXdnIRNtFZb+t/ZRtXcDiVnzpqx8mPcDWxgARUqx0W1QB9MeUZiNrV4qP+Ehc+BpNgATsTX8ozYKL2NtFYAHc84fG7ndxUPr+AR/iQSns7uSUufAymwDOb2+NjK27lEFocm/EE2WpyIy/Hi66MWuMKJn8RvxIcj87IM5Vh9663ziW36kR0HNenXuxmfaD8JC7tfKbrhFr7LiZCrMjrzTeGx+PmkosrkNzW94ObzwocJ7A1HokLolY+AvkTiD/q1H0cN48c5EL8Crkttsa/AXQVDmutfyku0E7jShx49XqV3MFK8IryDhYVbj7Sj2P2eBxwcXoe8T8idsKKPRcnZw1b+slFTubwUwhktrfnAt7J++jwQtLZcm3sr9LQrjRzz6cfMv9aLvgmnAGvpoaGLxM4mAEaLV7iAzQ3oU0IvD5x9ix3yF2RAAuYAOO2f7PEFWCXZ4C9Pb2UsgDeVnFSpbFK7/IWu7TPTvBqzbGdCHOJQSxiEjt6IyZmxQyEJHv6xyQsYk//moVFsN2zP6fRImjfq7/n/wFDguUQFNEwugAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-important.callout-style-default .callout-caption {
+    background-color: #f7dddc
+  }
+
+  div.callout-warning {
+    border-left-color: #f0ad4e !important;
+  }
+
+  div.callout-warning .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAETklEQVRYCeVWW2gcVRg+58yaTUnizqbipZeX4uWhBEniBaoUX1Ioze52t7sRq6APio9V9MEaoWlVsFasRq0gltaAPuxms8lu0gcviE/FFOstVbSIxgcv6SU7EZqmdc7v9+9mJtNks51NTUH84ed889/PP+cmxP+d5FIbMJmNbpREu4WUkiTtCicKny0l1pIKmBzovF2S+hIJHX8iEu3hZJ5lNZGqyRrGSIQpq15AzF28jgpeY6yk6GVdrfFqdrD6Iw+QlB8g0YS2g7dyQmXM/IDhBhT0UCiRf59lfqmmDvzRt6kByV/m4JjtzuaujMUM2c5Z2d6JdKrRb3K2q6mA+oYVz8JnDdKPmmNthzkAk/lN63sYPgevrguc72aZX/L9C6x09GYyxBgCX4NlvyGUHOKELlm5rXeR1kchuChJt4SSwyddZRXgvwMGvYo4QSlk3/zkHD8UHxwVJA6zjZZqP8v8kK8OWLnIZtLyCAJagYC4rTGW/9Pqj92N/c+LUaAj27movwbi19tk/whRCIE7Q9vyI6yvRpftAKVTdUjOW40X3h5OXsKCdmFcx0xlLJoSuQngnrJe7Kcjm4OMq9FlC7CMmScQANuNvjfP3PjGXDBaUQmbp296S5L4DrpbrHN1T87ZVEZVCzg1FF0Ft+dKrlLukI+/c9ENo+TvlTDbYFvuKPtQ9+l052rXrgKoWkDAFnvh0wTOmYn8R5f4k/jN/fZiCM1tQx9jQQ4ANhqG4hiL0qIFTGViG9DKB7GYzgubnpofgYRwO+DFjh0Zin2m4b/97EDkXkc+f6xYAPX0KK2I/7fUQuwzuwo/L3AkcjugPNixC8cHf0FyPjWlItmLxWw4Ou9YsQCr5fijMGoD/zpdRy95HRysyXA74MWOnscpO4j2y3HAVisw85hX5+AFBRSHt4ShfLFkIMXTqyKFc46xdzQM6XbAi702a7sy04J0+feReMFKp5q9esYLCqAZYw/k14E/xcLLsFElaornTuJB0svMuJINy8xkIYuL+xPAlWRceH6+HX7THJ0djLUom46zREu7tTkxwmf/FdOZ/sh6Q8qvEAiHpm4PJ4a/doJe0gH1t+aHRgCzOvBvJedEK5OFE5jpm4AGP2a8Dxe3gGJ/pAutug9Gp6he92CsSsWBaEcxGx0FHytmIpuqGkOpldqNYQK8cSoXvd+xLxXADw0kf6UkJNFtdo5MOgaLjiQOQHcn+A6h5NuL2s0qsC2LOM75PcF3yr5STuBSAcGG+meA14K/CI21HcS4LBT6tv0QAh8Dr5l93AhZzG5ZJ4VxAqdZUEl9z7WJ4aN+svMvwHHL21UKTd1mqvChH7/Za5xzXBBKrUcB0TQ+Ulgkfbi/H/YT5EptrGzsEK7tR1B7ln9BBwckYfMiuSqklSznIuoIIOM42MQO+QnduCoFCI0bpkzjCjddHPN/F+2Yu+sd9bKNpVwHhbS3LluK/0zgfwD0xYI5dXuzlQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-warning.callout-style-default .callout-caption {
+    background-color: #fcefdc
+  }
+
+  div.callout-tip {
+    border-left-color: #02b875 !important;
+  }
+
+  div.callout-tip .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAADr0lEQVRYCe1XTWgTQRj9ZjZV8a9SPIkKgj8I1bMHsUWrqYLVg4Ue6v9BwZOxSYsIerFao7UiUryIqJcqgtpimhbBXoSCVxUFe9CTiogUrUp2Pt+3aUI2u5vdNh4dmMzOzHvvezuz8xNFM0mjnbXaNu1MvFWRXkXEyE6aYOYJpdW4IXuA4r0fo8qqSMDBU0v1HJUgVieAXxzCsdE/YJTdFcVIZQNMyhruOMJKXYFoLfIfIvVIMWdsrd+Rpd86ZmyzzjJmLStqRn0v8lzkb4rVIXvnpScOJuAn2ACC65FkPzEdEy4TPWRLJ2h7z4cArXzzaOdKlbOvKKX25Wl00jSnrwVxAg3o4dRxhO13RBSdNvH0xSARv3adTXbBdTf64IWO2vH0LT+cv4GR1DJt+DUItaQogeBX/chhbTBxEiZ6gftlDNXTrvT7co4ub5A6gp9HIcHvzTa46OS5fBeP87Qm0fQkr4FsYgVQ7Qg+ZayaDg9jhg1GkWj8RG6lkeSacrrHgDaxdoBiZPg+NXV/KifMuB6//JmYH4CntVEHy/keA6x4h4CU5oFy8GzrBS18cLJMXcljAKB6INjWsRcuZBWVaS3GDrqB7rdapVIeA+isQ57Eev9eCqzqOa81CY05VLd6SamW2wA2H3SiTbnbSxmzfp7WtKZkqy4mdyAlGx7ennghYf8voqp9cLSgKdqNfa6RdRsAAkPwRuJZNbpByn+RrJi1RXTwdi8RQF6ymDwGMAtZ6TVE+4uoKh+MYkcLsT0Hk8eAienbiGdjJHZTpmNjlbFJNKDVAp2fJlYju6IreQxQ08UJDNYdoLSl6AadO+fFuCQqVMB1NJwPm69T04Wv5WhfcWyfXQB+wXRs1pt+nCknRa0LVzSA/2B+a9+zQJadb7IyyV24YAxKp2Jqs3emZTuNnKxsah+uabKbMk7CbTgJx/zIgQYErIeTKRQ9yD9wxVof5YolPHqaWo7TD6tJlh7jQnK5z2n3+fGdggIOx2kaa2YI9QWarc5Ce1ipNWMKeSG4DysFF52KBmTNMmn5HqCFkwy34rDg05gDwgH3bBi+sgFhN/e8QvRn8kbamCOhgrZ9GJhFDgfcMHzFb6BAtjKpFhzTjwv1KCVuxHvCbsSiEz4CANnj84cwHdFXAbAOJ4LTSAawGWFn5tDhLMYz6nWeU2wJfIhmIJBefcd/A5FWQWGgrWzyORZ3Q6HuV+Jf0Bj+BTX69fm1zWgK7By1YTXchFDORywnfQ7GpzOo6S+qECrsx2ifVQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-tip.callout-style-default .callout-caption {
+    background-color: #ccf1e3
+  }
+
+  div.callout-caution {
+    border-left-color: #fd7e14 !important;
+  }
+
+  div.callout-caution .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAACV0lEQVRYCdVWzWoUQRCuqp2ICBLJXgITZL1EfQDBW/bkzUMUD7klD+ATSHBEfAIfQO+iXsWDxJsHL96EHAwhgzlkg8nBg25XWb0zIb0zs9muYYWkoKeru+vn664fBqElyZNuyh167NXJ8Ut8McjbmEraKHkd7uAnAFku+VWdb3reSmRV8PKSLfZ0Gjn3a6Xlcq9YGb6tADjn+lUfTXtVmaZ1KwBIvFI11rRXlWlatwIAAv2asaa9mlB9wwygiDX26qaw1yYPzFXg2N1GgG0FMF8Oj+VIx7E/03lHx8UhvYyNZLN7BwSPgekXXLribw7w5/c8EF+DBK5idvDVYtEEwMeYefjjLAdEyQ3M9nfOkgnPTEkYU+sxMq0BxNR6jExrAI31H1rzvLEfRIdgcv1XEdj6QTQAS2wtstEALLG1yEZ3QhH6oDX7ExBSFEkFINXH98NTrme5IOaaA7kIfiu2L8A3qhH9zRbukdCqdsA98TdElyeMe5BI8Rs2xHRIsoTSSVFfCFCWGPn9XHb4cdobRIWABNf0add9jakDjQJpJ1bTXOJXnnRXHRf+dNL1ZV1MBRCXhMbaHqGI1JkKIL7+i8uffuP6wVQAzO7+qVEbF6NbS0LJureYcWXUUhH66nLR5rYmva+2tjRFtojkM2aD76HEGAD3tPtKM309FJg5j/K682ywcWJ3PASCcycH/22u+Bh7Aa0ehM2Fu4z0SAE81HF9RkB21c5bEn4Dzw+/qNOyXr3DCTQDMBOdhi4nAgiFDGCinIa2owCEChUwD8qzd03PG+qdW/4fDzjUMcE1ZpIAAAAASUVORK5CYII=');
+  }
+
+  div.callout-caution.callout-style-default .callout-caption {
+    background-color: #ffe5d0
+  }
+
+  </style>
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-position="left" class="quarto-title-block center">
+  <h1 class="title">Simple linear regression II</h1>
+  <p class="subtitle">EC 320, Set 05</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Andrew Dickinson 
+</div>
+</div>
+</div>
+
+  <p class="date">Spring 2023</p>
+</section>
+<section id="housekeeping" class="slide level2">
+<h2>Housekeeping</h2>
+<p><span class="hi">PS03:</span></p>
+<ul>
+<li>Due <em>(next)</em> Tuesday at 11:59p</li>
+<li>Covers remaining a bunch of OLS stuff up to today</li>
+</ul>
+<div class="fragment">
+<p><span class="hi">LA04:</span></p>
+<ul>
+<li>Due Friday at 5:00p</li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="hi">Reading:</span> <em>(up to this point)</em></p>
+<p>ItE: R, 1, <span class="hi">2</span> MM: 1, <span class="hi">2</span></p>
+</div>
+</section>
+<section>
+<section id="prologue" class="title-slide slide level1 inverse note center">
+<h1><em>Prologue</em></h1>
+<div class="cell" data-hash="040-main_cache/revealjs/unnamed-chunk-1_5757aae86687aeaf18cfca0e4f6a2748">
+
+</div>
+</section>
+<section id="last-time" class="slide level2">
+<h2>Last Time</h2>
+<p>We considered a simple linear regression of <span class="math inline">\(Y_i\)</span> on <span class="math inline">\(X_i\)</span>:</p>
+<p><span class="math display">\[
+Y_i = \beta_1 + \beta_2X_i + u_i.
+\]</span></p>
+<div class="fragment">
+<ul>
+<li><span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(\beta_2\)</span> are <span class="note">population parameters</span> that describe the <em>“true”</em> relationship between <span class="math inline">\(X_i\)</span> and <span class="math inline">\(Y_i\)</span>.</li>
+<li><span class="hi">Problem:</span> We don’t know the population parameters. The best we can do is to estimate them.</li>
+</ul>
+</div>
+</section>
+<section id="last-time-1" class="slide level2">
+<h2>Last Time</h2>
+<p>We derived the <span class="hi">OLS</span> estimator by minimizing <span class="math inline">\(\sum_{i=1}^n \hat{u}_i^2\)</span>.</p>
+<div class="columns">
+<div class="column" style="width:40%;">
+<p><span class="hi">Intercept:</span></p>
+<p><span class="math display">\[
+\hat{\beta}_1 = \bar{Y} - \hat{\beta}_2 \bar{X}
+\]</span></p>
+</div><div class="column" style="width:60%;">
+<p><span class="hp">Slope:</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+\hat{\beta}_2 &amp;= \dfrac{\sum_{i=1}^n (Y_i - \bar{Y})(X_i - \bar{X})}{\sum_{i=1}^n  (X_i - \bar{X})^2}
+\end{aligned}
+\]</span></p>
+</div>
+</div>
+<p>We used these formulas to obtain estimates of the parameters <span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(\beta_2\)</span> in a regression of <span class="math inline">\(Y_i\)</span> on <span class="math inline">\(X_i\)</span>.</p>
+</section>
+<section id="last-time-2" class="slide level2">
+<h2>Last Time</h2>
+<p>With the <span class="hi">OLS</span> estimates, we constructed a regression line:</p>
+<p><span class="math display">\[
+\hat{Y_i} = \hat{\beta}_1 + \hat{\beta}_2X_i.
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\hat{Y_i}\)</span> are predicted or <span class="note">fitted</span> values of <span class="math inline">\(Y_i\)</span>.</li>
+<li>Think of <span class="math inline">\(\hat{Y_i}\)</span> as an estimated average value of <span class="math inline">\(Y_i\)</span> given a particular <span class="math inline">\(X_i\)</span>.</li>
+</ul>
+<div class="fragment">
+<p><span class="hi">OLS</span> still produces prediction errors: <span class="math inline">\(\hat{u}_i = Y_i - \hat{Y_i}\)</span>.</p>
+<ul>
+<li>Put differently, there is a part of <span class="math inline">\(Y_i\)</span> we can explain and a part we cannot: <span class="math inline">\(Y_i = \hat{Y_i} + \hat{u}_i\)</span>.</li>
+</ul>
+</div>
+</section>
+<section id="review" class="slide level2">
+<h2>Review</h2>
+<p>What is the equation for the regression model estimated below?</p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-2-1.png" width="960" class="r-stretch quarto-figure-center"><p><br></p>
+</section>
+<section id="review-1" class="slide level2" data-visibility="uncounted">
+<h2>Review</h2>
+<p>The estimated <span class="hi">intercept</span> is -10.7. What does this tell us?</p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-3-1.png" width="960" class="r-stretch quarto-figure-center"><p><span class="fragment">With <span class="note">zero</span> years of education, estimate hourly earnings would be –$10.44</span></p>
+</section>
+<section id="review-2" class="slide level2" data-visibility="uncounted">
+<h2>Review</h2>
+<p>The estimated <span class="hp">slope</span> is 2.3. How do we interpret it?</p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-4-1.png" width="960" class="r-stretch quarto-figure-center"><p><span class="fragment">For each additional year of schooling, hourly earnings increase by $2.32</span></p>
+</section></section>
+<section>
+<section id="ols-properties" class="title-slide slide level1 inverse note center">
+<h1><em>OLS properties</em></h1>
+
+</section>
+<section id="ols-properties-1" class="slide level2">
+<h2>OLS Properties</h2>
+<p><span class="hi">OLS</span> has <span class="note">three</span> important properties:</p>
+<p><br></p>
+<div class="fragment">
+<p><span class="note">1.</span> Residuals sum to zero: <span class="math inline">\(\sum_{i=1}^n \hat{u}_i = 0\)</span>.</p>
+</div>
+<div class="fragment">
+<p><span class="note">2.</span> The sample covariance between the independent variable and the residuals is zero: <span class="math inline">\(\sum_{i=1}^n X_i \hat{u}_i = 0\)</span>.</p>
+</div>
+<div class="fragment">
+<p><span class="note">3.</span> The point <span class="math inline">\((\bar{X}, \bar{Y})\)</span> is always on the regression line.</p>
+</div>
+<div class="fragment">
+<p><br></p>
+<p><span class="hi">PS03</span> includes <span class="note">proving</span> <span class="note">1.</span> <em>and</em> <span class="note">2.</span> in the upcoming problem set.</p>
+</div>
+</section>
+<section id="property-3.-proof" class="slide level2">
+<h2>Property <span class="note">3.</span> <em>(proof)</em></h2>
+<p>The point <span class="math inline">\((\bar{X}, \bar{Y})\)</span> is always on the regression line.</p>
+<ul>
+<li>Start with the regression line: <span class="math inline">\(\hat{Y_i} = \hat{\beta}_1 + \hat{\beta}_2X_i\)</span>.</li>
+</ul>
+<div class="fragment">
+<ul>
+<li><span class="math inline">\(\hat{Y_i} = \bar{Y} - \hat{\beta}_2 \bar{X} + \hat{\beta}_2X_i\)</span>.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Plug in <span class="math inline">\(\bar{X}\)</span> for <span class="math inline">\(X_i\)</span>:</li>
+</ul>
+<p><span class="math display">\[
+\begin{aligned}
+\hat{Y_i} &amp;= \bar{Y} - \hat{\beta}_2 \bar{X} + \hat{\beta}_2\bar{X} \\
+&amp;= \bar{Y}.
+\end{aligned}
+\]</span></p>
+</div>
+</section></section>
+<section>
+<section id="goodness-of-fit" class="title-slide slide level1 inverse note center">
+<h1><em>Goodness of fit</em></h1>
+
+</section>
+<section id="goodness-of-fit-1" class="slide level2">
+<h2>Goodness of Fit</h2>
+<p><span class="hi-orange">Regression 1</span> <em>vs.</em> <span class="hii">Regression 2</span></p>
+<ul>
+<li>Same slope.</li>
+<li>Same intercept.</li>
+</ul>
+<p><span class="note">Q:</span> Which fitted regression line <em>“explains”</em><sup>1</sup> the data better?</p>
+<div class="columns">
+<div class="column" style="width:50;">
+<div class="cell" data-layout-align="center" data-hash="040-main_cache/revealjs/unnamed-chunk-5_93d05e289721f3496f34743d9f8eab66">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="040-main_files/figure-revealjs/unnamed-chunk-5-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50;">
+<div class="cell" data-layout-align="center" data-hash="040-main_cache/revealjs/unnamed-chunk-6_7051028993dab6a9c55ecab27ca5f919">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="040-main_files/figure-revealjs/unnamed-chunk-6-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<aside><ol class="aside-footnotes"><li id="fn1"><p><em>Explains</em> <span class="mono">=</span> <em>fits</em>.</p></li></ol></aside></section>
+<section id="goodness-of-fit-2" class="slide level2" data-visibility="uncounted">
+<h2>Goodness of Fit</h2>
+<p><span class="hi-orange">Regression 1</span> <em>vs.</em> <span class="hii">Regression 2</span></p>
+<p>The <span class="note">coefficient of determination</span>, <span class="math inline">\(R^2\)</span>, is the fraction of the variation in <span class="math inline">\(Y_i\)</span> <em>“explained”</em> by <span class="math inline">\(X_i\)</span>.</p>
+<ul>
+<li><span class="math inline">\(R^2 = 1 \implies X_i\)</span> explains <em>all</em> of the variation in <span class="math inline">\(Y_i\)</span>.</li>
+<li><span class="math inline">\(R^2 = 0 \implies X_i\)</span> explains <em>none</em> of the variation in <span class="math inline">\(Y_i\)</span>.</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50;">
+<div class="cell fig-cap-location-bottom" data-layout-align="center" data-hash="040-main_cache/revealjs/unnamed-chunk-7_e882b1c0d5a572288238ed3a24e5e7bf">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="040-main_files/figure-revealjs/unnamed-chunk-7-1.png" width="960"></p>
+<p></p><figcaption><span class="math inline">\(R^2\)</span> = 0.73</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50;">
+<div class="cell" data-layout-align="center" data-hash="040-main_cache/revealjs/unnamed-chunk-8_e68d8a7332dcf5c4eb6cfb04bf81b117">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="040-main_files/figure-revealjs/unnamed-chunk-8-1.png" width="960"></p>
+<p></p><figcaption><span class="math inline">\(R^2\)</span> = 0.05</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="section" class="slide level2">
+<h2></h2>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-9-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="section-1" class="slide level2" data-visibility="uncounted">
+<h2></h2>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-10-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="section-2" class="slide level2" data-visibility="uncounted">
+<h2></h2>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-11-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="explained-and-unexplained-variation" class="slide level2">
+<h2>Explained and unexplained variation</h2>
+<p>Residuals remind us that there are parts of <span class="math inline">\(Y_i\)</span> we can’t explain.</p>
+<p><span class="math display">\[
+Y_i = \hat{Y_i} + \hat{u}_i
+\]</span></p>
+<ul>
+<li>Sum the above, divide by <span class="math inline">\(n\)</span>, and use the fact that OLS residuals sum to zero to get:</li>
+</ul>
+<p><span class="math display">\[
+\bar{\hat{u}} = 0 \implies \bar{Y} = \bar{\hat{Y}}
+\]</span></p>
+</section>
+<section id="explained-and-unexplained-variation-1" class="slide level2">
+<h2>Explained and unexplained variation</h2>
+<p><span class="note">Total Sum of Squares</span> (<span class="hi-red">TSS</span>) measures variation in <span class="math inline">\(Y_i\)</span>:</p>
+<p><span class="math display">\[
+{\color{#BF616A} \text{TSS}} \equiv \sum_{i=1}^n (Y_i - \bar{Y})^2
+\]</span></p>
+<ul>
+<li><span class="hi-red">TSS</span> can be decomposed into explained and unexplained variation.</li>
+</ul>
+<div class="fragment">
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="note">Explained Sum of Squares</span> (<span class="hi-yellow">ESS</span>) measures the variation in <span class="math inline">\(\hat{Y_i}\)</span>:</p>
+<p><span class="math display">\[
+{\color{#EBCB8B} \text{ESS}} \equiv \sum_{i=1}^n (\hat{Y_i} - \bar{Y})^2
+\]</span></p>
+</div><div class="column" style="width:50%;">
+<p><span class="note">Residual Sum of Squares</span> (<span class="hi-orange">RSS</span>) measures the variation in <span class="math inline">\(\hat{u}_i\)</span>:</p>
+<p><span class="math display">\[
+{\color{#D08770} \text{RSS}} \equiv \sum_{i=1}^n \hat{u}_i^2
+\]</span></p>
+</div>
+</div>
+</div>
+</section>
+<section id="section-3" class="slide level2" data-visibility="uncounted">
+<h2></h2>
+<div class="vertical-center">
+<p><span class="note">Goal:</span> Show that <span class="math inline">\({\color{#BF616A} \text{TSS}} = {\color{#EBCB8B} \text{ESS}} + {\color{#D08770} \text{RSS}}\)</span>.</p>
+</div>
+</section>
+<section id="section-4" class="slide level2" data-visibility="uncounted">
+<h2></h2>
+<p><span class="note">Goal:</span> Show that <span class="math inline">\({\color{#BF616A} \text{TSS}} = {\color{#EBCB8B} \text{ESS}} + {\color{#D08770} \text{RSS}}\)</span>.</p>
+<p><span class="note"><em>Step 1:</em></span> Plug <span class="math inline">\(Y_i = \hat{Y_i} + \hat{u}_i\)</span> into <span class="math inline">\({\color{#BF616A} \text{TSS}}\)</span>.</p>
+<p><span class="math display">\[
+\begin{align*}
+{\color{#BF616A} \text{TSS}} &amp;= \sum_{i=1}^n (Y_i - \bar{Y})^2 \\
+                             &amp;= \sum_{i=1}^n ([\hat{Y_i} + \hat{u}_i] - [\bar{\hat{Y}} + \bar{\hat{u}}])^2
+\end{align*}
+\]</span></p>
+</section>
+<section id="section-5" class="slide level2" data-visibility="uncounted">
+<h2></h2>
+<p><span class="note">Goal:</span> Show that <span class="math inline">\({\color{#BF616A} \text{TSS}} = {\color{#EBCB8B} \text{ESS}} + {\color{#D08770} \text{RSS}}\)</span>.</p>
+<p><span class="note"><em>Step 2:</em></span> Recall that <span class="math inline">\(\bar{\hat{u}} = 0\)</span> &amp; <span class="math inline">\(\bar{Y} = \bar{\hat{Y}}\)</span>.</p>
+<p><span class="math display">\[
+\begin{align*}
+{\color{#BF616A} \text{TSS}} &amp;= \sum_{i=1}^n \left( [\hat{Y_i} - \bar{Y}] + \hat{u}_i \right)^2 \\
+                             &amp;= \sum_{i=1}^n \left( [\hat{Y_i} - \bar{Y}] + \hat{u}_i \right) \left( [\hat{Y_i} - \bar{Y}] + \hat{u}_i \right) \\
+                             &amp;= \sum_{i=1}^n (\hat{Y_i} - \bar{Y})^2 + \sum_{i=1}^n \hat{u}_i^2 + 2 \sum_{i=1}^n \left( (\hat{Y_i} - \bar{Y})\hat{u}_i \right)
+\end{align*}
+\]</span></p>
+<p><br></p>
+</section>
+<section id="section-6" class="slide level2" data-visibility="uncounted">
+<h2></h2>
+<p><span class="note">Goal:</span> Show that <span class="math inline">\({\color{#BF616A} \text{TSS}} = {\color{#EBCB8B} \text{ESS}} + {\color{#D08770} \text{RSS}}\)</span>.</p>
+<p><span class="note"><em>Step 2:</em></span> Recall that <span class="math inline">\(\bar{\hat{u}} = 0\)</span> &amp; <span class="math inline">\(\bar{Y} = \bar{\hat{Y}}\)</span>.</p>
+<p><span class="math display">\[
+\begin{align*}
+{\color{#BF616A} \text{TSS}} &amp;= \sum_{i=1}^n \left( [\hat{Y_i} - \bar{Y}] + \hat{u}_i \right)^2 \\
+                             &amp;= \sum_{i=1}^n \left( [\hat{Y_i} - \bar{Y}] + \hat{u}_i \right) \left( [\hat{Y_i} - \bar{Y}] + \hat{u}_i \right) \\
+                             &amp;= {\color{#EBCB8B}{\sum_{i=1}^n (\hat{Y_i} - \bar{Y})^2}} + {\color{#D08770}{\sum_{i=1}^n \hat{u}_i^2}} + 2 \sum_{i=1}^n \left( (\hat{Y_i} - \bar{Y})\hat{u}_i \right)
+\end{align*}
+\]</span></p>
+<p><span class="note"><em>Step 3:</em></span> Notice <span class="hi-yellow">ESS</span> and <span class="hi-orange">RSS</span>.</p>
+</section>
+<section id="section-7" class="slide level2" data-visibility="uncounted">
+<h2></h2>
+<p><span class="note">Goal:</span> Show that <span class="math inline">\({\color{#BF616A} \text{TSS}} = {\color{#EBCB8B} \text{ESS}} + {\color{#D08770} \text{RSS}}\)</span>.</p>
+<p><span class="note"><em>Step 2:</em></span> Recall that <span class="math inline">\(\bar{\hat{u}} = 0\)</span> &amp; <span class="math inline">\(\bar{Y} = \bar{\hat{Y}}\)</span>.</p>
+<p><span class="math display">\[
+\begin{align*}
+{\color{#BF616A} \text{TSS}} &amp;= \sum_{i=1}^n \left( [\hat{Y_i} - \bar{Y}] + \hat{u}_i \right)^2 \\
+                             &amp;= \sum_{i=1}^n \left( [\hat{Y_i} - \bar{Y}] + \hat{u}_i \right) \left( [\hat{Y_i} - \bar{Y}] + \hat{u}_i \right) \\
+                             &amp;= {\color{#EBCB8B}{\sum_{i=1}^n (\hat{Y_i} - \bar{Y})^2}} + {\color{#D08770}{\sum_{i=1}^n \hat{u}_i^2}} + 2 \sum_{i=1}^n \left( (\hat{Y_i} - \bar{Y})\hat{u}_i \right) \\
+                             &amp;= {\color{#EBCB8B} \text{ESS}} + {\color{#D08770} \text{RSS}} + 2 \sum_{i=1}^n \left( (\hat{Y_i} - \bar{Y})\hat{u}_i \right)
+\end{align*}
+\]</span></p>
+</section>
+<section id="section-8" class="slide level2" data-visibility="uncounted">
+<h2></h2>
+<p><span class="note">Goal:</span> Show that <span class="math inline">\({\color{#BF616A} \text{TSS}} = {\color{#EBCB8B} \text{ESS}} + {\color{#D08770} \text{RSS}}\)</span>.</p>
+<p><span class="note"><em>Step 4:</em></span> Simplify.</p>
+<p><span class="math display">\[
+\begin{align*}
+{\color{#BF616A} \text{TSS}} &amp;= {\color{#EBCB8B} \text{ESS}} + {\color{#D08770} \text{RSS}} + 2 \sum_{i=1}^n \left( (\hat{Y_i} - \bar{Y})\hat{u}_i \right) \\
+                             &amp;= {\color{#EBCB8B} \text{ESS}} + {\color{#D08770} \text{RSS}} + 2 \sum_{i=1}^n \hat{Y_i}\hat{u}_i - 2 \bar{Y}\sum_{i=1}^n \hat{u}_i
+\end{align*}
+\]</span></p>
+<div class="fragment">
+<p><span class="note"><em>Step 5:</em></span> Shut down the last two terms. Notice that</p>
+<p><span class="math display">\[
+\begin{align*}
+2 \sum_{i=1}^n \hat{Y_i}\hat{u}_i - 2 \bar{Y}\sum_{i=1}^n \hat{u}_i = 0
+\end{align*}
+\]</span></p>
+<p><em>Which you will prove to be true in <span class="hi">PS03</span></em></p>
+</div>
+</section>
+<section id="section-9" class="slide level2">
+<h2></h2>
+<div class="vertical-center">
+<p>Some visual intuition makes all the math seem a lot simpler</p>
+<p><br></p>
+<p><span class="fragment">Let’s regress <code>mpg</code> on <code>wt</code> using a new dataset, <code>mtcars</code></span></p>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="math display">\[
+{\color{#ffffff} \text{TSS} \equiv \sum_{i=1}^n (Y_i - \bar{Y})^2}
+\]</span></p>
+</div><div class="column" style="width:50%;">
+<p><span class="math display">\[
+{\color{#ffffff} \text{TSS} \equiv \sum_{i=1}^n (Y_i - \bar{Y})^2}
+\]</span></p>
+</div>
+</div>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-12-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:30%;">
+<p><span class="math display">\[
+{\color{#A3BE8C} \overline{\text{MPG}_i}} = 20.09
+\]</span></p>
+</div><div class="column" style="width:70%;">
+<p><span class="math display">\[
+{\color{#ffffff} \text{TSS} \equiv \sum_{i=1}^n (Y_i - \bar{Y})^2}
+\]</span></p>
+</div>
+</div>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-13-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:30%;">
+<p><span class="math display">\[
+{\color{#BF616A} \text{TSS}} \equiv \sum_{i=1}^n (Y_i - \bar{Y})^2
+\]</span></p>
+</div><div class="column" style="width:70%;">
+<p><span class="math display">\[
+{\color{#ffffff} \overline{\text{Crime}_i} = 21.05}
+\]</span></p>
+</div>
+</div>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-14-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:40%;">
+<p><span class="math display">\[
+{\color{#B48EAD} \widehat{\text{Crime}_i}} = 18.41 + 1.76 \cdot \text{Police}_i
+\]</span></p>
+</div><div class="column" style="width:60%;">
+<p><span class="math display">\[
+{\color{#ffffff} \text{ESS} \equiv \sum_{i=1}^n (\hat{Y_i} - \bar{Y})^2}
+\]</span></p>
+</div>
+</div>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-15-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:40%;">
+<p><span class="math display">\[
+{\color{#EBCB8B} \text{ESS}} \equiv \sum_{i=1}^n (\hat{Y_i} - \bar{Y})^2
+\]</span></p>
+</div><div class="column" style="width:60%;">
+<p><span class="math display">\[
+{\color{#ffffff} \widehat{\text{Crime}_i} = 18.41 + 1.76 \cdot \text{Police}_i}
+\]</span></p>
+</div>
+</div>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-16-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:40%;">
+<p><span class="math display">\[
+{\color{#D08770} \text{RSS}} \equiv \sum_{i=1}^n \hat{u}_i^2
+\]</span></p>
+</div><div class="column" style="width:60%;">
+<p><span class="math display">\[
+{\color{#ffffff} \text{ESS} \equiv \sum_{i=1}^n (\hat{Y_i} - \bar{Y})^2}
+\]</span></p>
+</div>
+</div>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-17-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:33%;">
+<p><span class="math display">\[
+{\color{#BF616A} \text{TSS}} \equiv \sum_{i=1}^n (Y_i - \bar{Y})^2
+\]</span></p>
+</div><div class="column" style="width:33%;">
+<p><span class="math display">\[
+{\color{#EBCB8B} \text{ESS}} \equiv \sum_{i=1}^n (\hat{Y_i} - \bar{Y})^2
+\]</span></p>
+</div><div class="column" style="width:33%;">
+<p><span class="math display">\[
+{\color{#D08770} \text{RSS}} \equiv \sum_{i=1}^n \hat{u}_i^2
+\]</span></p>
+</div>
+</div>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-18-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="goodness-of-fit-3" class="slide level2">
+<h2>Goodness of fit</h2>
+<p>What percentage of the variation in our <span class="math inline">\(Y_i\)</span> is <em>apparently</em> explained by our model? The <span class="math inline">\(R^2\)</span> term represents this percentage.</p>
+<p>Total variation is represented by <span class="hi-red">TSS</span> and our model is capturing the ‘explained’ sum of squares, <span class="hi-yellow">ESS</span>.</p>
+<p>Taking a simple ratio reveals how much variation our model explains.</p>
+<ul>
+<li><p><span class="math inline">\(R^2 = \frac{{\color{#EBCB8B} \text{ESS}}}{{\color{#BF616A} \text{TSS}}}\)</span> varies between 0 and 1</p></li>
+<li><p><span class="math inline">\(R^2 = 1 - \frac{{\color{#D08770} \text{RSS}}}{{\color{#BF616A} \text{TSS}}}\)</span>, 100% less the unexplained variation</p></li>
+</ul>
+<div class="fragment">
+<p><span class="math inline">\(R^2\)</span> is related to the correlation between the actual values of <span class="math inline">\(Y\)</span> and the fitted values of <span class="math inline">\(Y\)</span>. Can show that <span class="math inline">\(R^2 = (r_{Y, \hat{Y}})^2\)</span>.</p>
+</div>
+</section>
+<section id="goodness-of-fit-4" class="slide level2">
+<h2>Goodness of fit</h2>
+<p><em>So what?</em> <span class="fragment">In the social sciences, low <span class="math inline">\(R^2\)</span> values are common.</span></p>
+<div class="fragment">
+<p>Low <span class="math inline">\(R^2\)</span> doesn’t mean that an estimated regression is useless.</p>
+<ul>
+<li>In a randomized control trial, <span class="math inline">\(R^2\)</span> is usually less than 0.1</li>
+</ul>
+</div>
+<div class="fragment">
+<p>High <span class="math inline">\(R^2\)</span> doesn’t necessarily mean you have a <em>“good”</em> regression.</p>
+<ul>
+<li>Worries about selection bias and omitted variables still apply</li>
+<li>Some ‘powerfully high’ <span class="math inline">\(R^2\)</span> values are the result of simple accounting exercises, and tell us nothing about causality</li>
+</ul>
+</div>
+</section></section>
+<section>
+<section id="units-of-measurement" class="title-slide slide level1 inverse note center">
+<h1><em>Units of measurement</em></h1>
+
+</section>
+<section id="ps03-demeaning" class="slide level2">
+<h2>PS03: Demeaning</h2>
+<p>Suppose we have the following model:</p>
+<p><span class="math display">\[
+Y_i = \beta_0 + \beta_1 X_i + u_i
+\]</span></p>
+<p>Before running a regression of <span class="math inline">\(Y_i\)</span> on <span class="math inline">\(X_i\)</span>, you decided to demean each variable by subtracting off the mean from each observation. This gave you <span class="math inline">\(\tilde{Y_i} = Y_i - \bar{Y}\)</span> and <span class="math inline">\(\tilde{X_i} = X_i - \bar{X}\)</span>. The estimation equation becomes:</p>
+<p><span class="math display">\[
+\tilde{Y_i} = \alpha_0 + \alpha_1 \tilde{X_i} + v_i
+\]</span></p>
+<p>where <span class="math inline">\(v_i = u_i - \bar{u_i}\)</span>.</p>
+<p><span class="note">Show:</span> <span class="math inline">\(\alpha_0 = 0\)</span> and <span class="math inline">\(\alpha_1 = \beta_1\)</span></p>
+</section></section>
+<section>
+<section id="ex.-returns-to-schooling" class="title-slide slide level1 inverse center">
+<h1><span class="ex">Ex.</span> <span class="hi-white">Returns to schooling</span></h1>
+
+</section>
+<section id="returns-to-schooling" class="slide level2">
+<h2>Returns to Schooling</h2>
+<div class="cell" data-hash="040-main_cache/revealjs/unnamed-chunk-19_7fe43b2c78b36b0565a5f80283d76ec4">
+
+</div>
+<p><span class="note">Policy Question:</span> <em>How much should the state subsidize higher education?</em></p>
+<ul>
+<li>Could higher education subsidies increase future tax revenue?</li>
+<li>Could targeted subsidies reduce income and racial inequality?</li>
+<li>Are there positive externalities associated with higher education?</li>
+</ul>
+<div class="fragment">
+<p><br></p>
+<p><span class="note"><em>Empirical Question:</em></span> <em>What is the return to an additional year of education?</em><sup>1</sup></p>
+</div>
+<aside><ol class="aside-footnotes"><li id="fn2"><p>Useful for learning about the econometric assumptions that allow causal interpretation.</p></li></ol></aside></section>
+<section id="returns-to-schooling-1" class="slide level2">
+<h2>Returns to Schooling</h2>
+<p><span class="note">Step 1:</span> Write down the population model.</p>
+<p><span class="math display">\[
+\log(\text{Earnings}_i) = \beta_1 + \beta_2\text{Education}_i + u_i
+\]</span></p>
+<div class="fragment">
+<p><span class="note">Step 2:</span> Find data.</p>
+<ul>
+<li><em>Source:</em> <a href="https://econpapers.repec.org/article/oupqjecon/v_3a107_3ay_3a1992_3ai_3a4_3ap_3a1421-1436..htm">Blackburn and Neumark (1992)</a>.</li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="note">Step 3:</span> Run a regression using OLS.</p>
+<p><span class="math display">\[
+\log(\hat{\text{Earnings}_i}) = \hat{\beta}_1 + \hat{\beta}_2\text{Education}_i
+\]</span></p>
+</div>
+</section></section>
+<section>
+<section id="aside-logarithms" class="title-slide slide level1 center">
+<h1><span class="note">Aside:</span> Logarithms</h1>
+
+</section>
+<section id="aside-logarithms-1" class="slide level2">
+<h2><span class="note">Aside:</span> Logarithms</h2>
+<p><span class="note">Logarithms</span> are functions are convenient for numbers that span several orders of magnitude</p>
+<p><br></p>
+<div class="fragment">
+<p>The <span class="note"><em>natural logarithm</em></span></p>
+<blockquote>
+<p>Inverse function to the exponential function with base <span class="math inline">\(e\)</span> defined as:</p>
+</blockquote>
+<p><span class="math display">\[
+\log{x} \quad \textit{or} \quad \ln{x}
+\]</span></p>
+</div>
+<div class="fragment">
+<p>Simplifies interpretation and stabilize relationships between variables.</p>
+</div>
+</section>
+<section id="aside-logarithms-2" class="slide level2">
+<h2><span class="note">Aside:</span> Logarithms</h2>
+<p>Our example model: <span class="math display">\[\log(\text{Earnings}_i) = \beta_1 + \beta_2\text{Education}_i + u_i\]</span></p>
+<p><span class="note">Natural logarithm</span> is applied to the dependent variable (Earnings).</p>
+<div class="fragment">
+<p><br></p>
+<p>Estimates how the <em>percentage change</em> in earnings. <span class="fragment"><span class="math inline">\(\beta_2\)</span> represents the percentage change in earnings for a one-unit increase in education.</span></p>
+</div>
+</section></section>
+<section>
+<section id="return-to-our-example" class="title-slide slide level1 center" data-visibility="uncounted">
+<h1><span class="note"><em>Return to our</em></span> <span class="ex">example</span></h1>
+
+</section>
+<section id="returns-to-schooling-2" class="slide level2">
+<h2>Returns to Schooling</h2>
+<p><span class="math inline">\(\log(\hat{\text{Earnings}_i})\)</span> <span class="math inline">\(=\)</span> <span class="hp">5.97</span> <span class="math inline">\(+\)</span> <span class="hp">0.06</span> <span class="math inline">\(\times\)</span> <span class="math inline">\(\text{Education}_i\)</span>.</p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-20-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="returns-to-schooling-3" class="slide level2">
+<h2>Returns to Schooling</h2>
+<p>Additional year of school associated with a <span class="hp">6%</span> increase in earnings.</p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-21-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="returns-to-schooling-4" class="slide level2">
+<h2>Returns to Schooling</h2>
+<p><span class="math inline">\(R^2\)</span> <span class="math inline">\(=\)</span> <span class="hp">0.097</span>.</p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-22-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="returns-to-schooling-5" class="slide level2">
+<h2>Returns to Schooling</h2>
+<p>Education explains <span class="hp">9.7%</span> of the variation in wages.</p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-23-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="returns-to-schooling-6" class="slide level2">
+<h2>Returns to Schooling</h2>
+<p>What must we <span class="hi"><em>assume</em></span> to interpret <span class="math inline">\(\hat{\beta}_2\)</span> <span class="math inline">\(=\)</span> <span class="hp">0.06</span> as the return to schooling?</p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-24-1.png" width="960" class="r-stretch quarto-figure-center"></section></section>
+<section>
+<section id="classical-assumptions" class="title-slide slide level1 inverse note center">
+<h1><em>Classical assumptions</em></h1>
+
+</section>
+<section id="residuals-vs.-errors" class="slide level2">
+<h2>Residuals <em>vs.</em> Errors</h2>
+<p>The most important assumptions concern the error term <span class="math inline">\(u_i\)</span>.</p>
+<div class="fragment">
+<p><span class="hi">Important:</span> An error <span class="math inline">\(u_i\)</span> and a residual <span class="math inline">\(\hat{u}_i\)</span> are related, but different.</p>
+</div>
+<div class="fragment">
+<p><span class="hi-green">Error:</span></p>
+<blockquote>
+<p>Difference between the wage of a worker with 16 years of education and the <span class="hi-green"><em>expected wage</em></span> with 16 years of education.</p>
+</blockquote>
+</div>
+<div class="fragment">
+<p><span class="hii">Residual:</span></p>
+<blockquote>
+<p>Difference between the wage of a worker with 16 years of education and the <span class="hii"><em>average wage</em></span> of workers with 16 years of education.</p>
+</blockquote>
+</div>
+<div class="fragment">
+<div class="align-center">
+<p><span class="hi-green">Population</span> <span class="note"><em>vs.</em></span> <span class="hii">sample</span></p>
+</div>
+</div>
+</section>
+<section id="residuals-vs.-errors-1" class="slide level2">
+<h2>Residuals <em>vs.</em> Errors</h2>
+<p>A <span class="hii">residual</span> tells us how a <span class="hi">worker</span>’s wages compare to the average wages of workers in the <span class="hii">sample</span> with the same level of education.</p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-25-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="residuals-vs.-errors-2" class="slide level2">
+<h2>Residuals <em>vs.</em> Errors</h2>
+<p>A <span class="hii">residual</span> tells us how a <span class="hi">worker</span>’s wages compare to the average wages of workers in the <span class="hii">sample</span> with the same level of education.</p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-26-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="residuals-vs.-errors-3" class="slide level2">
+<h2>Residuals <em>vs.</em> Errors</h2>
+<p>An <span class="hi-green">error</span> tells us how a <span class="hi">worker</span>’s wages compare to the expected wages of workers in the <span class="hi-green">population</span> with the same level of education.</p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-27-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="classical-assumptions-of-ols" class="slide level2">
+<h2>Classical Assumptions of OLS</h2>
+<div class="fragment">
+<p><span class="note">A1.</span> <span class="hi">Linearity:</span> The population relationship is <span class="note"><em>linear in parameters</em></span> with an additive error term.</p>
+</div>
+</section>
+<section id="linearity-a1." class="slide level2">
+<h2>Linearity (<span class="note">A1.</span>)</h2>
+<blockquote>
+<p>The population relationship is <span class="note"><em>linear in parameters</em></span> with an additive error term.</p>
+</blockquote>
+<div class="fragment">
+<p><span class="hi">Examples</span></p>
+<ul>
+<li><span class="math inline">\(\text{Wage}_i = \beta_1 + \beta_2 \text{Experience}_i + u_i\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><span class="math inline">\(\log(\text{Happiness}_i) = \beta_1 + \beta_2 \log(\text{Money}_i) + u_i\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><span class="math inline">\(\sqrt{\text{Convictions}_i} = \beta_1 + \beta_2 (\text{Early Childhood Lead Exposure})_i + u_i\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><span class="math inline">\(\log(\text{Earnings}_i) = \beta_1 + \beta_2 \text{Education}_i + u_i\)</span></li>
+</ul>
+</div>
+</section>
+<section id="linearity-a1.-1" class="slide level2">
+<h2>Linearity (<span class="note">A1.</span>)</h2>
+<blockquote>
+<p>The population relationship is <span class="note"><em>linear in parameters</em></span> with an additive error term.</p>
+</blockquote>
+<p><span class="hi">Violations</span></p>
+<ul>
+<li><span class="math inline">\(\text{Wage}_i = (\beta_1 + \beta_2 \text{Experience}_i)u_i\)</span></li>
+</ul>
+<div class="fragment">
+<ul>
+<li><span class="math inline">\(\text{Consumption}_i = \frac{1}{\beta_1 + \beta_2 \text{Income}_i} + u_i\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><span class="math inline">\(\text{Population}_i = \frac{\beta_1}{1 + e^{\beta_2 + \beta_3 \text{Food}_i}} + u_i\)</span></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><span class="math inline">\(\text{Batting Average}_i = \beta_1 (\text{Wheaties Consumption})_i^{\beta_2} + u_i\)</span></li>
+</ul>
+</div>
+</section>
+<section id="classical-assumptions-of-ols-1" class="slide level2" data-visibility="uncounted">
+<h2>Classical Assumptions of OLS</h2>
+<p><span class="note">A1.</span> <span class="hi">Linearity:</span> The population relationship is <span class="note"><em>linear in parameters</em></span> with an additive error term.</p>
+<div class="fragment">
+<p><span class="note">A2.</span> <span class="hi">Sample Variation:</span> There is variation in <span class="math inline">\(X\)</span>.</p>
+</div>
+</section>
+<section id="sample-variation-a2." class="slide level2">
+<h2>Sample Variation (<span class="note">A2.</span>)</h2>
+<blockquote>
+<p>There is variation in <span class="math inline">\(X\)</span>.</p>
+</blockquote>
+<p><span class="hi">Example</span></p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-28-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="sample-variation-a2.-1" class="slide level2">
+<h2>Sample Variation (<span class="note">A2.</span>)</h2>
+<blockquote>
+<p>There is variation in <span class="math inline">\(X\)</span>.</p>
+</blockquote>
+<p><span class="hi">Violation</span></p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-29-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="section-10" class="slide level2" data-visibility="uncounted">
+<h2></h2>
+<div class="vertical-center">
+<p>As we will see later, <span class="note">sample variation</span> matters for inference as well.</p>
+</div>
+</section>
+<section id="classical-assumptions-of-ols-2" class="slide level2" data-visibility="uncounted">
+<h2>Classical Assumptions of OLS</h2>
+<p><span class="note">A1.</span> <span class="hi">Linearity:</span> The population relationship is <span class="note"><em>linear in parameters</em></span> with an additive error term.</p>
+<p><span class="note">A2.</span> <span class="hi">Sample Variation:</span> There is variation in <span class="math inline">\(X\)</span>.</p>
+<div class="fragment">
+<p><span class="note">A3.</span> <span class="hi">Exogeniety:</span> The <span class="math inline">\(X\)</span> variable is <span class="note">exogenous</span></p>
+</div>
+</section>
+<section id="exogeniety-a3." class="slide level2">
+<h2>Exogeniety (<span class="note">A3.</span>)</h2>
+<p>Assumption</p>
+<blockquote>
+<p>The <span class="math inline">\(X\)</span> variable is <span class="note">exogenous:</span></p>
+</blockquote>
+<p><span class="math display">\[
+\mathop{\mathbb{E}}\left( u|X \right) = 0
+\]</span></p>
+<div class="fragment">
+<p>The assignment of <span class="math inline">\(X\)</span> is effectively random.</p>
+<p><br></p>
+</div>
+<div class="fragment">
+<p><em>Implication:</em> no <span class="hp">selection bias</span> or <span class="hii">omitted variable bias</span></p>
+</div>
+</section>
+<section id="exogeniety-a3.-1" class="slide level2" data-visibility="uncounted">
+<h2>Exogeniety (<span class="note">A3.</span>)</h2>
+<p>Assumption</p>
+<blockquote>
+<p>The <span class="math inline">\(X\)</span> variable is <span class="note">exogenous:</span></p>
+</blockquote>
+<p><span class="math display">\[
+\mathop{\mathbb{E}}\left( u|X \right) = 0
+\]</span></p>
+<p><span class="hi">Example</span></p>
+<p>In the labor market, an important component of <span class="math inline">\(u\)</span> is unobserved ability.</p>
+<ul>
+<li><span class="math inline">\(\mathop{\mathbb{E}}\left( u|\text{Education} = 12 \right) = 0\)</span> and <span class="math inline">\(\mathop{\mathbb{E}}\left( u|\text{Education} = 20 \right) = 0\)</span>.</li>
+<li><span class="math inline">\(\mathop{\mathbb{E}}\left( u|\text{Experience} = 0 \right) = 0\)</span> and <span class="math inline">\(\mathop{\mathbb{E}}\left( u|\text{Experience} = 40 \right) = 0\)</span>.</li>
+<li><em>Do you believe this?</em></li>
+</ul>
+</section>
+<section id="section-11" class="slide level2" data-visibility="uncounted">
+<h2></h2>
+<div class="vertical-center">
+<p>Graphically…</p>
+</div>
+</section>
+<section id="section-12" class="slide level2">
+<h2></h2>
+<p>Valid exogeniety, <em>i.e.</em>, <span class="math inline">\(\mathop{\mathbb{E}}\left( u \mid X \right) = 0\)</span></p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-31-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="section-13" class="slide level2">
+<h2></h2>
+<p>Invalid exogeniety, <em>i.e.</em>, <span class="math inline">\(\mathop{\mathbb{E}}\left( u \mid X \right) \neq 0\)</span></p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-32-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="section-14" class="slide level2">
+<h2></h2>
+<div class="vertical-center">
+<p><span class="note"><em>When can we trust OLS?</em></span></p>
+</div>
+</section>
+<section id="bias" class="slide level2">
+<h2>Bias</h2>
+<p>An estimator is <span class="hi-red">biased</span> if its expected value is different from the true population parameter.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="hi">Unbiased estimator:</span> <span class="math inline">\(\mathop{\mathbb{E}}\left[ \hat{\beta} \right] = \beta\)</span></p>
+<div class="cell" data-layout-align="center" data-hash="040-main_cache/revealjs/unnamed-chunk-33_4fa8373548efa2f9a1270870801a174f">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="040-main_files/figure-revealjs/unnamed-chunk-33-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p><span class="hi-red">Biased estimator:</span> <span class="math inline">\(\mathop{\mathbb{E}}\left[ \hat{\beta} \right] \neq \beta\)</span></p>
+<div class="cell" data-layout-align="center" data-hash="040-main_cache/revealjs/unnamed-chunk-34_9596e3118eae4147f020af454dc69c1d">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="040-main_files/figure-revealjs/unnamed-chunk-34-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="required-assumptions" class="slide level2">
+<h2>Required Assumptions</h2>
+<p><span class="note">A1.</span> <span class="hi">Linearity:</span> The population relationship is <span class="note"><em>linear in parameters</em></span> with an additive error term.</p>
+<p><span class="note">A2.</span> <span class="hi">Sample Variation:</span> There is variation in <span class="math inline">\(X\)</span>.</p>
+<p><span class="note">A3.</span> <span class="hi">Exogeniety:</span> The <span class="math inline">\(X\)</span> variable is <span class="note">exogenous</span></p>
+<div class="fragment">
+<p>☛ (3) implies <span class="note">random sampling</span>. <span class="fragment">Without it, our <span class="note">external validity</span> becomes uncertain.<sup>1</sup></span></p>
+</div>
+<aside><ol class="aside-footnotes"><li id="fn3"><p><span class="note">Internal Validity:</span> Relates to how well a study is conducted (does it satisfy OLS assumptions?). <br> <span class="note">External Validity:</span> Relates to how applicable the findings are to the real world.</p></li></ol></aside></section>
+<section id="section-15" class="slide level2">
+<h2></h2>
+<div class="vertical-center">
+<p><span class="note">Let’s prove unbiasedness of OLS</span></p>
+</div>
+</section>
+<section class="slide level2">
+
+<h6 id="section-16"></h6>
+<p><span class="note">Proving unbiasedness of simple OLS</span></p>
+<p>Suppose we have the following model</p>
+<p><span class="math display">\[
+Y_i = \beta_1 + \beta_2 X_i + u_i
+\]</span></p>
+<div class="fragment">
+<p>The slope parameter follows as:</p>
+<p><span class="math display">\[
+\hat{\beta}_2 = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sum(x_i - \bar{x})^2}
+\]</span></p>
+</div>
+<div class="fragment">
+<p>(<em>As shown in section 2.3 in ItE</em>) that the estimator <span class="math inline">\(\hat{\beta_2}\)</span>, can be broken up into a nonrandom and a random component:</p>
+</div>
+</section>
+<section class="slide level2">
+
+<h6 data-visibility="uncounted" id="section-17"></h6>
+<p><span class="note">Proving unbiasedness of simple OLS</span></p>
+<p>Substitute for <span class="math inline">\(y_i\)</span>:</p>
+<p><span class="math display">\[
+\hat{\beta}_2 = \frac{\sum((\beta_1 + \beta_2x_i + u_i) - \bar{y})(x_i - \bar{x})}{\sum(x_i - \bar{x})^2}
+\]</span></p>
+<div class="fragment">
+<p>Substitute <span class="math inline">\(\bar{y} = \beta_1 + \beta_2\bar{x}\)</span>:</p>
+<p><span class="math display">\[
+\hat{\beta}_2 = \frac{\sum(u_i(x_i - \bar{x}))}{\sum(x_i - \bar{x})^2} + \frac{\sum(\beta_2x_i(x_i - \bar{x}))}{\sum(x_i - \bar{x})^2}
+\]</span></p>
+</div>
+<div class="fragment">
+<p>The non-random component, <span class="math inline">\(\beta_2\)</span>, is factored out:</p>
+<p><span class="math display">\[
+\hat{\beta}_2 = \frac{\sum(u_i(x_i - \bar{x}))}{\sum(x_i - \bar{x})^2} + \beta_2\frac{\sum(x_i(x_i - \bar{x}))}{\sum(x_i - \bar{x})^2}
+\]</span></p>
+</div>
+</section>
+<section class="slide level2">
+
+<h6 data-visibility="uncounted" id="section-18"></h6>
+<p><span class="note">Proving unbiasedness of simple OLS</span></p>
+<p><span class="note">Observe</span> that the second term is equal to 1. Thus, we have:</p>
+<p><span class="math display">\[
+\hat{\beta}_2 = \beta_2 + \frac{\sum(u_i(x_i - \bar{x}))}{\sum(x_i - \bar{x})^2}
+\]</span></p>
+<div class="fragment">
+<p>Taking the expectation,</p>
+<p><span class="math display">\[
+\mathrm{E}[\hat{\beta_2}] = \mathrm{E}[\beta] + \mathrm{E}\left[\frac{\sum \hat{u_i} (x_i - \bar{x})}{\sum(x_i - \bar{x})^2} \right]
+\]</span></p>
+</div>
+<div class="fragment">
+<p>By <span class="hi">Rules 01</span> and <span class="hi">02</span> of expected value and <span class="note">A3</span>:</p>
+<p><span class="math display">\[
+\begin{equation*}
+  \mathrm{E}[\hat{\beta_2}] = \beta + \frac{\sum \mathrm{E}[\hat{u_i}] (x_i - \bar{x})}{\sum(x_i - \bar{x})^2} = \beta
+\end{equation*}
+\]</span></p>
+</div>
+</section>
+<section id="required-assumptions-1" class="slide level2" data-visibility="uncounted">
+<h2>Required Assumptions</h2>
+<p><span class="note">A1.</span> <span class="hi">Linearity:</span> The population relationship is <span class="note"><em>linear in parameters</em></span> with an additive error term.</p>
+<p><span class="note">A2.</span> <span class="hi">Sample Variation:</span> There is variation in <span class="math inline">\(X\)</span>.</p>
+<p><span class="note">A3.</span> <span class="hi">Exogeniety:</span> The <span class="math inline">\(X\)</span> variable is <span class="note">exogenous</span></p>
+<p>☛ (3) implies <span class="note">random sampling</span>. Without it, our <span class="note">external validity</span> becomes uncertain.<sup>1</sup></p>
+<p><br></p>
+<p><span class="hi">Result:</span> <span class="fragment">OLS is unbiased.</span></p>
+<aside><ol class="aside-footnotes"><li id="fn4"><p><span class="note">Internal Validity:</span> Relates to how well a study is conducted (does it satisfy OLS assumptions?). <br> <span class="note">External Validity:</span> Relates to how applicable the findings are to the real world.</p></li></ol></aside></section>
+<section id="classical-assumptions-of-ols-3" class="slide level2" data-visibility="uncounted">
+<h2>Classical Assumptions of OLS</h2>
+<p><span class="note">A1.</span> <span class="hi">Linearity:</span> The population relationship is <span class="note"><em>linear in parameters</em></span> with an additive error term.</p>
+<p><span class="note">A2.</span> <span class="hi">Sample Variation:</span> There is variation in <span class="math inline">\(X\)</span>.</p>
+<p><span class="note">A3.</span> <span class="hi">Exogeniety:</span> The <span class="math inline">\(X\)</span> variable is <span class="note">exogenous</span></p>
+<div class="fragment">
+<p><br> <br></p>
+<div class="align-center">
+<p>The following 2 assumptions are not required for unbiasedness…</p>
+</div>
+<div class="align-center">
+<p><span class="fragment">But the are important for an efficient estimator</span></p>
+</div>
+</div>
+</section>
+<section id="section-19" class="slide level2">
+<h2></h2>
+<div class="vertical-center">
+<p><span class="note"><em>Variance matters, too</em></span></p>
+</div>
+</section>
+<section id="why-variance-matters" class="slide level2">
+<h2>Why variance matters</h2>
+<p>Unbiasedness tells us that OLS gets it right, <em>on average</em>. <span class="fragment">But we can’t tell whether our sample is “typical.”</span></p>
+<p><br></p>
+<div class="fragment">
+<p><span class="hi">Variance</span> tells us how far OLS can deviate from the population mean.</p>
+<ul>
+<li>How tight is OLS centered on its expected value?</li>
+<li>This determines the <span class="hp">efficiency</span> of our estimator.</li>
+</ul>
+</div>
+</section>
+<section id="why-variance-matters-1" class="slide level2" data-visibility="uncounted">
+<h2>Why variance matters</h2>
+<p>Unbiasedness tells us that OLS gets it right, <em>on average</em>. But we can’t tell whether our sample is “typical.”</p>
+<p><br></p>
+<p>The smaller the variance, the closer OLS gets, <em>on average</em>, to the true population parameters <em>on any sample</em>.</p>
+<ul>
+<li>Given two unbiased estimators, we want the one with smaller variance.</li>
+<li>If <span class="note">two more assumptions</span> are satisfied, we are using the <span class="hp">most efficient</span> linear estimator.</li>
+</ul>
+</section>
+<section id="classical-assumptions-of-ols-4" class="slide level2" data-visibility="uncounted">
+<h2>Classical Assumptions of OLS</h2>
+<p><span class="note">A1.</span> <span class="hi">Linearity:</span> The population relationship is <span class="note"><em>linear in parameters</em></span> with an additive error term.</p>
+<p><span class="note">A2.</span> <span class="hi">Sample Variation:</span> There is variation in <span class="math inline">\(X\)</span>.</p>
+<p><span class="note">A3.</span> <span class="hi">Exogeniety:</span> The <span class="math inline">\(X\)</span> variable is <span class="note">exogenous</span></p>
+<div class="fragment">
+<p><span class="note">A4.</span> <span class="hi">Homoskedasticity:</span> The error term has the same variance for each value of the independent variable</p>
+</div>
+</section>
+<section id="homoskedasticity-a4." class="slide level2">
+<h2>Homoskedasticity (<span class="note">A4.</span>)</h2>
+<blockquote>
+<p>The error term has the same variance for each value of the independent variable:</p>
+</blockquote>
+<p><span class="math display">\[
+\mathop{\mathrm{Var}}(u|X) = \sigma^2.
+\]</span></p>
+<p><span class="hi">Example:</span></p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-35-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="homoskedasticity-a4.-1" class="slide level2">
+<h2>Homoskedasticity (<span class="note">A4.</span>)</h2>
+<blockquote>
+<p>The error term has the same variance for each value of the independent variable:</p>
+</blockquote>
+<p><span class="math display">\[
+\mathop{\mathrm{Var}}(u|X) = \sigma^2.
+\]</span></p>
+<p><span class="hi">Violation:</span> <span class="note">Heteroskedasticity</span></p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-36-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="homoskedasticity-a4.-2" class="slide level2">
+<h2>Homoskedasticity (<span class="note">A4.</span>)</h2>
+<blockquote>
+<p>The error term has the same variance for each value of the independent variable:</p>
+</blockquote>
+<p><span class="math display">\[
+\mathop{\mathrm{Var}}(u|X) = \sigma^2.
+\]</span></p>
+<p><span class="hi">Violation:</span> <span class="note">Heteroskedasticity</span></p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-37-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="heteroskedasticity-ex." class="slide level2">
+<h2>Heteroskedasticity <span class="ex">Ex.</span></h2>
+<p>Suppose we study the following relationship:</p>
+<p><span class="math display">\[
+\text{Luxury Expenditure}_i = \beta_1 + \beta_2 \text{Income}_i + u_i
+\]</span></p>
+<p><br></p>
+<p>As income increases, variation in luxury expenditures <span class="hii">increase</span></p>
+<ul>
+<li>Variance of <span class="math inline">\(u_i\)</span> is likely larger for higher-income households</li>
+<li>Plot of the residuals against the household income would likely reveal a funnel-shaped pattern</li>
+</ul>
+</section>
+<section id="section-20" class="slide level2" data-visibility="uncounted">
+<h2></h2>
+<p><span class="fragment">Common test for heteroskedasticity…</span> <span class="fragment">Plot the residuals across <span class="math inline">\(X\)</span></span></p>
+
+<img data-src="040-main_files/figure-revealjs/unnamed-chunk-38-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="section-21" class="slide level2" data-visibility="uncounted">
+<h2></h2>
+<div class="vertical-center">
+<p><span class="note">There is more to be said about homo/heteroskedasticity in EC 421</span></p>
+</div>
+</section>
+<section id="classical-assumptions-of-ols-5" class="slide level2" data-visibility="uncounted">
+<h2>Classical Assumptions of OLS</h2>
+<p><span class="note">A1.</span> <span class="hi">Linearity:</span> The population relationship is <span class="note"><em>linear in parameters</em></span> with an additive error term.</p>
+<p><span class="note">A2.</span> <span class="hi">Sample Variation:</span> There is variation in <span class="math inline">\(X\)</span>.</p>
+<p><span class="note">A3.</span> <span class="hi">Exogeniety:</span> The <span class="math inline">\(X\)</span> variable is <span class="note">exogenous</span></p>
+<p><span class="note">A4.</span> <span class="hi">Homoskedasticity:</span> The error term has the same variance for each value of the independent variable</p>
+<div class="fragment">
+<p><span class="note">A5.</span> <span class="hi">Non-autocorrelation:</span> The values of error terms have independent distributions</p>
+</div>
+</section>
+<section id="non-autocorrelation" class="slide level2">
+<h2>Non-Autocorrelation</h2>
+<blockquote>
+<p>The values of error terms have independent distributions<sup>1</sup></p>
+</blockquote>
+<p><span class="math display">\[
+E[u_i u_j]=0, \forall i \text{ s.t. } i \neq j
+\]</span></p>
+<div class="fragment">
+<p>Or…</p>
+<p><span class="math display">\[
+\begin{align*}
+\mathop{\text{Cov}}(u_i, u_j) &amp;= E[(u_i - \mu_u)(u_j - \mu_u)]\\
+                              &amp;= E[u_i u_j] = E[u_i] E[u_j]  = 0, \text{where } i \neq j
+\end{align*}
+\]</span></p>
+</div>
+<aside><ol class="aside-footnotes"><li id="fn5"><p><span class="note">Notes:</span> <span class="math inline">\(\forall i = \text{for all} \: i\)</span>, <span class="math inline">\(\text{s.t.} = \text{such that}\)</span>, <span class="math inline">\(i \neq j \: \text{means} \: i \: \text{is not equal to} \: j\)</span></p></li></ol></aside></section>
+<section id="non-autocorrelation-1" class="slide level2">
+<h2>Non-Autocorrelation</h2>
+<blockquote>
+<p>The values of error terms have independent distributions</p>
+</blockquote>
+<p><span class="math display">\[
+E[u_i u_j]=0, \forall i \text{ s.t. } i \neq j
+\]</span></p>
+<ul>
+<li>Implies no systematic association between pairs of individual <span class="math inline">\(u_i\)</span></li>
+<li>Almost always some unobserved correlation across individuals<sup>1</sup></li>
+<li>Referred to as <span class="hp">clustering</span> problem.</li>
+<li>An easy solution exists where we can adjust our standard errors</li>
+</ul>
+<aside><ol class="aside-footnotes"><li id="fn6"><p>(e.g.&nbsp;common correlation in unobservables among individuals within a given US state)</p></li></ol></aside></section>
+<section id="section-22" class="slide level2" data-visibility="uncounted">
+<h2></h2>
+<div class="vertical-center">
+<p>Let’s take a moment to talk about the <span class="note">variance</span> of the <span class="hi">OLS</span> <span class="note">estimator</span></p>
+</div>
+</section>
+<section class="slide level2">
+
+<p><span class="note">Proof of the population variance</span></p>
+<p>By definition</p>
+<p><span class="math display">\[
+Var(\hat{\beta}_2) = E\left[\left(\hat{\beta}_2 - E(\hat{\beta}_2)\right)^2\right] = E\left[\left(\hat{\beta}_2 - \beta_2\right)^2\right]
+\]</span></p>
+<div class="fragment">
+<p><span class="note">Step 1:</span> Derive an expression for <span class="math inline">\(\hat{\beta}_2 - \beta_2\)</span>:</p>
+<p><span class="math display">\[
+\hat{\beta}_2 - \beta_2 = \frac{\sum(y_i - \bar{y})(x_i - \bar{x})}{\sum(x_i - \bar{x})^2} - \beta_2
+\]</span></p>
+</div>
+<div class="fragment">
+<p>Substitute for <span class="math inline">\(Y_i\)</span>:</p>
+<p><span class="math display">\[
+\hat{\beta}_2 - \beta_2 = \frac{\sum((\beta_1 + \beta_2x_i + u_i) - \bar{y})(x_i - \bar{x})}{\sum(x_i - \bar{x})^2} - \beta_2
+\]</span></p>
+</div>
+</section>
+<section class="slide level2">
+
+<h6 data-visibility="uncounted" id="section-23"></h6>
+<p><span class="note">Proof of the population variance</span></p>
+<p>Substitute <span class="math inline">\(\bar{y} = \beta_1 + \beta_2\bar{x}\)</span>:</p>
+<p><span class="math display">\[
+\hat{\beta}_2 - \beta_2 = \frac{\sum(u_i(x_i - \bar{x}))}{\sum(x_i - \bar{x})^2}
+\]</span></p>
+<div class="fragment">
+<p><span class="note">Step 1:</span> Take variance <span class="math inline">\(\hat{\beta}_2 - \beta_2\)</span>:</p>
+<p><span class="math display">\[
+Var(\hat{\beta}_2) = E\left[\left(\frac{\sum(u_i(x_i - \bar{x}))}{\sum(x_i - \bar{x})^2}\right)^2\right]
+\]</span></p>
+</div>
+</section>
+<section class="slide level2">
+
+<h6 data-visibility="uncounted" id="section-24"></h6>
+<p>Square the numerator:</p>
+<p><span class="math display">\[
+Var(\hat{\beta}_2) = E\left[\frac{\sum(u_i(x_i - \bar{x}))\sum(\epsilon_j(x_j - \bar{x}))}{\left(\sum(x_i - \bar{x})^2\right)^2}\right]
+\]</span></p>
+<div class="fragment">
+<p>Using <span class="note">A5</span>, we can simplify:</p>
+<p><span class="math display">\[
+Var(\hat{\beta}_2) = \frac{1}{\left(\sum(x_i - \bar{x})^2\right)^2}\sum E(u_i^2(x_i - \bar{x})^2)
+\]</span></p>
+</div>
+</section>
+<section class="slide level2">
+
+<h6 data-visibility="uncounted" id="section-25"></h6>
+<p>Using <span class="note">A4</span>: <span class="math inline">\(Var(u_i) = \sigma^2\)</span>.</p>
+<p><span class="math display">\[
+Var(\hat{\beta}_2) = \frac{\sigma^2}{\left(\sum(x_i - \bar{x})^2\right)^2}\sum (x_i - \bar{x})^2
+\]</span></p>
+<div class="fragment">
+<p><br></p>
+<p>Thus we arrive at the variance of the OLS slope parameter:</p>
+<p><span class="math display">\[
+Var(\hat{\beta}_2) = \frac{\sigma^2}{\sum(x_i - \bar{x})^2}
+\]</span></p>
+</div>
+</section>
+<section id="section-26" class="slide level2" data-visibility="uncounted">
+<h2></h2>
+<div class="vertical-center">
+<p>If <span class="note">A4.</span> and <span class="note">A5.</span> are satisfied, along with <span class="note">A1.</span>, <span class="note">A2.</span>, and <span class="note">A3.</span>, then we are using the <span class="hi">most efficient</span> linear estimator.</p>
+</div>
+</section>
+<section id="classical-assumptions-of-ols-6" class="slide level2" data-visibility="uncounted">
+<h2>Classical Assumptions of OLS</h2>
+<p><span class="note">A1.</span> <span class="hi">Linearity:</span> The population relationship is <span class="note"><em>linear in parameters</em></span> with an additive error term.</p>
+<p><span class="note">A2.</span> <span class="hi">Sample Variation:</span> There is variation in <span class="math inline">\(X\)</span>.</p>
+<p><span class="note">A3.</span> <span class="hi">Exogeniety:</span> The <span class="math inline">\(X\)</span> variable is <span class="note">exogenous</span></p>
+<p><span class="note">A4.</span> <span class="hi">Homoskedasticity:</span> The error term has the same variance for each value of the independent variable</p>
+<p><span class="note">A5.</span> <span class="hi">Non-autocorrelation:</span> The values of error terms have independent distributions</p>
+<div class="fragment">
+<p><span class="note">A6.</span> <span class="hi">Normality:</span> The population error term in normally distributed with mean zero and variance <span class="math inline">\(\sigma^2\)</span></p>
+</div>
+</section>
+<section id="nomality-a6." class="slide level2">
+<h2>Nomality (<span class="note">A6.</span>)</h2>
+<blockquote>
+<p>The population error term in normally distributed with mean zero and variance <span class="math inline">\(\sigma^2\)</span></p>
+</blockquote>
+<p>Or,</p>
+<p><span class="math display">\[
+u \sim N(0,\sigma^2)
+\]</span></p>
+<p>Where <span class="math inline">\(\sim\)</span> stands for <span class="note">distributed by</span> and <span class="math inline">\(N\)</span> stands for <span class="note">normal distribution</span></p>
+<div class="fragment">
+<p><br></p>
+<p>However, <span class="note">A6.</span> is note required for efficientcy nor unbiasedness</p>
+</div>
+</section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="gauss-markov" class="title-slide slide level1 inverse note center">
+<h1><em>Gauss Markov</em></h1>
+
+</section>
+<section id="gauss-markov-theorem" class="slide level2">
+<h2>Gauss-Markov Theorem</h2>
+<blockquote>
+<p>OLS is the <span class="hi">Best Linear Unbiased Estimator</span> (<span class="hii">BLUE</span>) when the following assumptions hold:</p>
+</blockquote>
+<div class="fragment">
+<p><span class="note">A1.</span> <span class="hi">Linearity:</span> The population relationship is <span class="note"><em>linear in parameters</em></span> with an additive error term.</p>
+<p><span class="note">A2.</span> <span class="hi">Sample Variation:</span> There is variation in <span class="math inline">\(X\)</span>.</p>
+<p><span class="note">A3.</span> <span class="hi">Exogeniety:</span> The <span class="math inline">\(X\)</span> variable is <span class="note">exogenous</span></p>
+<p><span class="note">A4.</span> <span class="hi">Homoskedasticity:</span> The error term has the same variance for each value of the independent variable</p>
+<p><span class="note">A5.</span> <span class="hi">Non-autocorrelation:</span> The values of error terms have independent distributions</p>
+</div>
+</section>
+<section id="gauss-markov-theorem-1" class="slide level2">
+<h2>Gauss-Markov Theorem</h2>
+<blockquote>
+<p>OLS is the <span class="hi">Best Unbiased Estimator</span> (<span class="hii">BUE</span>) when the following assumptions hold:</p>
+</blockquote>
+<div class="fragment">
+<p><span class="note">A1.</span> <span class="hi">Linearity:</span> The population relationship is <span class="note"><em>linear in parameters</em></span> with an additive error term.</p>
+<p><span class="note">A2.</span> <span class="hi">Sample Variation:</span> There is variation in <span class="math inline">\(X\)</span>.</p>
+<p><span class="note">A3.</span> <span class="hi">Exogeniety:</span> The <span class="math inline">\(X\)</span> variable is <span class="note">exogenous</span></p>
+<p><span class="note">A4.</span> <span class="hi">Homoskedasticity:</span> The error term has the same variance for each value of the independent variable</p>
+<p><span class="note">A5.</span> <span class="hi">Non-autocorrelation:</span> The values of error terms have independent distributions</p>
+<p><span class="note">A6.</span> <span class="hi">Normality:</span> The population error term in normally distributed with mean zero and variance <span class="math inline">\(\sigma^2\)</span></p>
+</div>
+</section></section>
+<section>
+<section id="population-vs.-sample-revisited" class="title-slide slide level1 inverse note center">
+<h1><em>Population vs.&nbsp;sample, revisited</em></h1>
+
+</section>
+<section id="population-vs.-sample" class="slide level2">
+<h2>Population <em>vs.</em> Sample</h2>
+<p><span class="note">Q:</span> Why do we care about <em>population vs.&nbsp;sample</em>?</p>
+<div class="fragment">
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center" data-hash="040-main_cache/revealjs/pop1_ba470de74c65167ba0cc892a2fb264cc">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="040-main_files/figure-revealjs/pop1-1.png" width="960"></p>
+<p></p><figcaption>Population</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell" data-hash="040-main_cache/revealjs/scatter1_b5dc01a325a8943fe2c83af35f9bb781">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="040-main_files/figure-revealjs/scatter1-1.png" width="960"></p>
+<p></p><figcaption>Population relationship</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p><span class="math display">\[
+\begin{align*}
+  y_i &amp;= 2.53 + 0.57 x_i + u_i \\
+\end{align*}
+\]</span></p>
+</div>
+</section>
+<section id="population-vs.-sample-1" class="slide level2" data-visibility="uncounted">
+<h2>Population <em>vs.</em> Sample</h2>
+<p><span class="note">Q:</span> Why do we care about <em>population vs.&nbsp;sample</em>?</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell" data-hash="040-main_cache/revealjs/sample1_35a56d7af2d5e7719f845b8771c6c72c">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="040-main_files/figure-revealjs/sample1-1.png" width="960"></p>
+<p></p><figcaption>Sample 1: 30 random individuals</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell" data-hash="040-main_cache/revealjs/sample1-scatter_e0bd9f3f495c4f5413370fc5eda0c94c">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="040-main_files/figure-revealjs/sample1-scatter-1.png" width="960"></p>
+<p></p><figcaption>Sample relationship</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p><span class="math display">\[
+\begin{align*}
+  y_i       &amp;= 2.53 + 0.57 x_i + u_i \\
+  \hat{y}_i &amp;= 2.36 + 0.61 x_i
+\end{align*}
+\]</span></p>
+</section>
+<section id="population-vs.-sample-2" class="slide level2" data-visibility="uncounted">
+<h2>Population <em>vs.</em> Sample</h2>
+<p><span class="note">Q:</span> Why do we care about <em>population vs.&nbsp;sample</em>?</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell" data-hash="040-main_cache/revealjs/sample2_564dacb335f8cc0fe4365bf066423ad1">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="040-main_files/figure-revealjs/sample2-1.png" width="960"></p>
+<p></p><figcaption>Sample 2: 30 random individuals</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell" data-hash="040-main_cache/revealjs/sample2-scatter_0490655b9feb384d50170cf67f64e65d">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="040-main_files/figure-revealjs/sample2-scatter-1.png" width="960"></p>
+<p></p><figcaption>Sample relationship</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>$$ <span class="math display">\[\begin{align*}
+  y_i        &amp;= 2.53 + 0.57 x_i + u_i \\
+  \hat{y}_i &amp;= 2.79 + 0.56 x_i
+
+\end{align*}\]</span> $$</p>
+</section>
+<section id="population-vs.-sample-3" class="slide level2" data-visibility="uncounted">
+<h2>Population <em>vs.</em> Sample</h2>
+<p><span class="note">Q:</span> Why do we care about <em>population vs.&nbsp;sample</em>?</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell" data-hash="040-main_cache/revealjs/sample3_a30c1745fa2c9d6cc971d858671ca362">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="040-main_files/figure-revealjs/sample3-1.png" width="960"></p>
+<p></p><figcaption>Sample 3: 30 random individuals</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell" data-hash="040-main_cache/revealjs/sample3-scatter_6d62f2dc431817e704613b4595be6fab">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="040-main_files/figure-revealjs/sample3-scatter-1.png" width="960"></p>
+<p></p><figcaption>Sample relationship</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p><span class="math display">\[
+\begin{align*}
+  y_i &amp;= 2.53 + 0.57 x_i + u_i \\
+  \hat{y}_i = 3.21 + 0.45 x_i
+\end{align*}
+\]</span></p>
+</section>
+<section id="section-27" class="slide level2">
+<h2></h2>
+<div class="vertical-center">
+<p>By now you should know where this is going… <span class="fragment">Repeat <span class="note">10,000</span> times</span></p>
+</div>
+</section>
+<section class="slide level2">
+
+<p><br></p>
+
+<img data-src="040-main_files/figure-revealjs/sim-scatter-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="population-vs.-sample-4" class="slide level2">
+<h2>Population <em>vs.</em> Sample</h2>
+<p><span class="note">Q:</span> Why do we care about <em>population vs.&nbsp;sample</em>?</p>
+<ul>
+<li>On <span class="hi">average</span>, the regression lines match the population line nicely.</li>
+<li>However, <span class="note">individual lines</span> (samples) can miss the mark.</li>
+</ul>
+<p><br></p>
+<div class="fragment">
+<p><span class="hi">Answer:</span> Uncertainty matters.</p>
+<ul>
+<li>This sampling variation creates <span class="hi">uncertainty</span>.</li>
+<li><span class="math inline">\(\hat{\beta}_1\)</span> and <span class="math inline">\(\hat{\beta}_2\)</span> are random variables that depend on the random sample.</li>
+</ul>
+</div>
+</section>
+<section id="ols-variance" class="slide level2">
+<h2>OLS Variance</h2>
+<p>Variance of the slope estimator:</p>
+<p><span class="math display">\[
+\mathop{\mathrm{Var}}(\hat{\beta}_2) = \frac{\sigma^2}{\sum_{i=1}^n (X_i - \bar{X})^2}
+\]</span></p>
+<ul>
+<li>As error variance <span class="hii">increases</span>, variance of the slope estimator <span class="hii">increases</span></li>
+<li>As variation in <span class="math inline">\(X\)</span> <span class="hii">increases</span>, variance of the slope estimator <span class="hi-red">decreases</span></li>
+<li>Larger sample sizes exhibit more variation in <span class="math inline">\(X \implies \mathop{\mathrm{Var}}(\hat{\beta}_2)\)</span> falls as <span class="math inline">\(n\)</span> rises.</li>
+</ul>
+</section>
+<section id="ols-variance-1" class="slide level2" data-visibility="uncounted">
+<h2>OLS Variance</h2>
+<p>Variance of the slope estimator:</p>
+<p><span class="math display">\[
+\mathop{\mathrm{Var}}(\hat{\beta}_2) = \frac{\sigma^2}{\sum_{i=1}^n (X_i - \bar{X})^2}
+\]</span></p>
+<ul>
+<li><strong>As error variance <span class="hii">increases</span>, variance of the slope estimator <span class="hii">increases</span></strong></li>
+<li>As variation in <span class="math inline">\(X\)</span> <span class="hii">increases</span>, variance of the slope estimator <span class="hi-red">decreases</span></li>
+<li>Larger sample sizes exhibit more variation in <span class="math inline">\(X \implies \mathop{\mathrm{Var}}(\hat{\beta}_2)\)</span> falls as <span class="math inline">\(n\)</span> rises.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p>Same as before <span class="math inline">\(u_i \sim (0,1)\)</span>, <span class="math inline">\(X_i \sim (0,1.5)\)</span>, <span class="math inline">\(n = 30\)</span></p>
+
+<img data-src="040-main_files/figure-revealjs/sim-scatter-again-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section class="slide level2">
+
+<p>Increase variance in error term <span class="math inline">\(u_i \sim (0,2.5)\)</span>, <span class="math inline">\(X_i \sim (0,1.5)\)</span>, <span class="math inline">\(n = 30\)</span></p>
+
+<img data-src="040-main_files/figure-revealjs/sim-scatter-ii-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="ols-variance-2" class="slide level2" data-visibility="uncounted">
+<h2>OLS Variance</h2>
+<p>Variance of the slope estimator:</p>
+<p><span class="math display">\[
+\mathop{\mathrm{Var}}(\hat{\beta}_2) = \frac{\sigma^2}{\sum_{i=1}^n (X_i - \bar{X})^2}
+\]</span></p>
+<ul>
+<li>As error variance <span class="hii">increases</span>, variance of the slope estimator <span class="hii">increases</span></li>
+<li><strong>As variation in <span class="math inline">\(X\)</span> <span class="hii">increases</span>, variance of the slope estimator <span class="hi-red">decreases</span></strong></li>
+<li>Larger sample sizes exhibit more variation in <span class="math inline">\(X \implies \mathop{\mathrm{Var}}(\hat{\beta}_2)\)</span> falls as <span class="math inline">\(n\)</span> rises.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p>Original simulation <span class="math inline">\(u_i \sim (0,1)\)</span>, <span class="math inline">\(X_i \sim (0,1.5)\)</span>, <span class="math inline">\(n = 30\)</span></p>
+
+<img data-src="040-main_files/figure-revealjs/sim-scatter-againii-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section class="slide level2">
+
+<p>Increase variance in <span class="math inline">\(X_i\)</span> term <span class="math inline">\(u_i \sim (0,1)\)</span>, <span class="math inline">\(X_i \sim (0,3)\)</span>, <span class="math inline">\(n = 30\)</span></p>
+
+<img data-src="040-main_files/figure-revealjs/sim-scatter-iii-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="ols-variance-3" class="slide level2" data-visibility="uncounted">
+<h2>OLS Variance</h2>
+<p>Variance of the slope estimator:</p>
+<p><span class="math display">\[
+\mathop{\mathrm{Var}}(\hat{\beta}_2) = \frac{\sigma^2}{\sum_{i=1}^n (X_i - \bar{X})^2}
+\]</span></p>
+<ul>
+<li>As error variance <span class="hii">increases</span>, variance of the slope estimator <span class="hii">increases</span></li>
+<li>As variation in <span class="math inline">\(X\)</span> <span class="hii">increases</span>, variance of the slope estimator <span class="hi-red">decreases</span></li>
+<li><strong>Larger sample sizes exhibit more variation in <span class="math inline">\(X \implies \mathop{\mathrm{Var}}(\hat{\beta}_2)\)</span> falls as <span class="math inline">\(n\)</span> rises.</strong></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p>Original simulation <span class="math inline">\(u_i \sim (0,1)\)</span>, <span class="math inline">\(X_i \sim (0,1.5)\)</span>, <span class="math inline">\(n = 30\)</span></p>
+
+<img data-src="040-main_files/figure-revealjs/sim-scatter-againiii-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section class="slide level2">
+
+<p>Increase sample size (<span class="math inline">\(n\)</span>) in <span class="math inline">\(X_i\)</span> term <span class="math inline">\(u_i \sim (0,1)\)</span>, <span class="math inline">\(X_i \sim (0,1)\)</span>, <span class="math inline">\(n = 60\)</span></p>
+
+<img data-src="040-main_files/figure-revealjs/sim-scatter-iv-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="section-28" class="slide level2">
+<h2></h2>
+<div class="vertical-center">
+<p>We will further this discussion next time to conduct inference.</p>
+</div>
+</section></section>
+<section id="fin" class="title-slide slide level1 inverse center">
+<h1>Fin</h1>
+<!-- TODO: Create an aside about the mathematical language symbols -->
+<!-- 
+TODO: Create Gauss-Markov slides
+TODO: Make a note about canvas grades
+TODO: Add why we need variation in $X_i$ for A2
+     -->
+<div class="footer footer-default">
+<p>EC320, Set 05 | Simple linear regression (again)</p>
+</div>
+</section>
+
+
+    </div>
+  </div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="040-main_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="040-main_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="040-main_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="040-main_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="040-main_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="040-main_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="040-main_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="040-main_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="040-main_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="040-main_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'smaller': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();  
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const clipboard = new window.ClipboardJS('.code-copy-button', {
+        target: function(trigger) {
+          return trigger.previousElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copied!");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copied!");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      });
+      function tippyHover(el, contentFn) {
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto-reveal',
+          placement: 'bottom-start'
+        };
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config); 
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          return note.innerHTML;
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+    
+
+</body></html>

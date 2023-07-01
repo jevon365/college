@@ -1,0 +1,118 @@
+---
+name: inference
+---
+
+---
+
+## Inference
+
+Our current workflow:
+
+[1.]{.note} Get data (points with $X$ and $Y$ values).
+
+[2.]{.note} Regress $Y$ on $X$.
+
+[3.]{.note} Plot the [point estimates]{.note} (*i.e.*, $\hat{Y_i} = \hat{\beta}_0 + \hat{\beta}_1X_i$) and report.
+
+<br>
+
+. . .
+
+But when do we [learn something?]{.note} [We are missing a step.]{.fragment}
+
+. . .
+
+- _For $\hat{\beta}_2$, can we rule out previously hypothesized values?_
+- _How confident should we be in the precision of our estimates?_
+
+. . .
+
+We need to be careful about our sample being atypical. [AKA uncertainty.]{.fragment .note}
+
+---
+
+::: {.vertical-center}
+However, there is a [problem]{.hi-red}.
+:::
+
+---
+
+## {data-visibility="uncounted"}
+
+::: {.vertical-center}
+Recall the variance of the [point estimate]{.note} $\hat{\beta_1}$
+$$
+\mathop{\text{Var}}(\hat{\beta}_1) = \frac{\sigma^2}{\sum_{i=1}^n (X_i - \bar{X})^2}
+$$
+
+[The problem is that ${\color{#ffffff} \sigma^2}$ is unobserved. So what do we do? _Estimate it._]{.white}
+
+:::
+
+---
+
+## {data-visibility="uncounted"}
+
+::: {.vertical-center}
+Recall the variance of the [point estimate]{.note} $\hat{\beta_1}$
+$$
+\mathop{\text{Var}}(\hat{\beta}_1) = \frac{{\color{#BF616A} \sigma^2}}{\sum_{i=1}^n (X_i - \bar{X})^2}
+$$
+
+The problem is that ${\color{#BF616A} \sigma^2}$ is unobserved. [So what do we do?]{.note .fragment} [_Estimate it._]{.fragment .note}
+
+:::
+
+---
+
+## Estimating error variance
+
+We can estimate the variance of $u_i$ (${\color{#BF616A} \sigma^2}$) using the sum of squared residuals ([RSS]{.hi-orange}):
+
+$$
+s^2_u = \dfrac{\sum_i \hat{u}_i^2}{n - k}
+$$
+
+where $n$ is the number of observations and $k$ is the number of regression parameters. [(In a simple linear regression, $k=2$.)]{.fragment}
+
+. . .
+
+If the assumptions from [Gauss-Markov]{.note} hold, then $s^2_u$ is an unbiased estimator of $\sigma^2$.
+
+. . .
+
+In essence, we are _learning from our prediction errors_
+
+---
+
+## OLS Variance
+
+With $s^2_u = \dfrac{\sum_i \hat{u}_i^2}{n - k}$, we can calculate the [estimated variance]{.note} of $\hat{\beta}_2$
+
+$$
+\mathop{\text{Var}}(\hat{\beta}_2) = \frac{s^2_u}{\sum_{i=1}^n (X_i - \bar{X})^2}
+$$
+
+. . .
+
+Taking the square root, we get the [standard error]{.note} of the OLS estimator:
+
+$$
+\mathop{\hat{\text{SE}}} \left( \hat{\beta}_2 \right) = \sqrt{ \frac{s^2_u}{\sum_{i=1}^n (X_i - \bar{X})^2} }
+$$
+
+The [standard error]{.note} is the [standard deviation]{.hi} of the [sampling distribution.]{.note}
+
+
+---
+
+## Inference
+
+After deriving the distribution of $\hat{\beta}_2$^[*Hint:* It's normal with mean $\beta_2$ and variance $\frac{\sigma^2}{\sum_{i=1}^n (X_i - \bar{X})^2}$.], we have two (related) options for formal statistical inference (learning) about our unknown parameter $\beta_2$:
+
+<br>
+
+- [Hypothesis testing:]{.hi} Determine whether there is statistically significant evidence to reject a hypothesized value or range of values.
+- [Confidence intervals:]{.hi} Use the estimate and its standard error to create an interval that will generally^[_E.g._, similarly constructed 95% confidence intervals will contain the true parameter 95% of the time.] contain the true parameter.
+
+

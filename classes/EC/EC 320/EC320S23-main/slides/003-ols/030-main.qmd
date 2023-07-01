@@ -1,0 +1,118 @@
+---
+title: "Simple linear regression I"
+subtitle: "EC 320, Set 04"
+author: "Andrew Dickinson"
+date: last-modified
+date-format: "Spring YYYY"
+format: 
+  revealjs:
+    theme: [default, ../styles.scss]
+    monobackgroundcolor: #F5F5F5
+    slide-number: true
+    footer: "EC320, Set 04 | Regression logic"
+    preview-links: auto
+    code-fold: FALSE
+    # code-copy: TRUE
+    highlight-style: a11y-light
+    cache: FALSE
+    html-math-method: mathjax 
+title-slide-attributes: 
+  data-background-position: left
+---
+
+## Housekeeping
+
+[PS02:]{.hi}
+
+- Due Tuesday at 11:59p
+- Covers remaining topics from the review and from lecture Wednesday
+
+. . .
+
+[LA03:]{.hi}
+
+- Due Friday at 5:00p
+
+. . .
+
+[Reading:]{.hi} _(up to this point)_
+
+ItE: R, [1]{.hi}
+MM: 1, [2]{.hi}
+
+<!-- # Prologue {.inverse .note} -->
+
+```{r}
+pacman::p_load(hrbrthemes, fastverse, tidyverse,
+               magrittr, wooldridge, here, kableExtra,
+               ggdag, nord, latex2exp, dagitty, viridis,
+               emoGG, plotly)
+
+
+hi = nord_palettes$polarnight[3]
+hii = nord_palettes$frost[3] 
+hp = nord_palettes$aurora[5]
+higreen = nord_palettes$aurora[4]
+hiorange = nord_palettes$aurora[2]
+hired = nord_palettes$aurora[1]
+higrey = nord_palettes$snowstorm[1]
+
+mytheme = theme_ipsum(base_family = "Fira Sans Book", base_size = 20) +
+ theme(panel.grid.minor.x = element_blank(),
+       axis.title.x = element_text(size = 18),
+       axis.title.y = element_text(size = 18))
+
+mytheme_s = mytheme + 
+  theme(panel.grid.minor.y = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        axis.line = element_line(color = hi))
+
+
+data = get(data(campus)) %>% 
+  mutate(crime = round(crime/enroll*1000, 2),
+         police = round(police/enroll*1000, 2)) %>% 
+  filter(police < 10) %>% # remove outlier
+  select(crime, police)
+data2 = get(data(campus)) %>% 
+  mutate(crime = round(crime/enroll*1000, 2),
+         police = round(police/enroll*1000, 2)) %>% 
+  select(crime, police)
+```
+
+<!-- {{< include _031-prologue.qmd >}} -->
+
+# Regression logic {.inverse .note}
+
+{{< include _032-logic.qmd >}}
+
+# Simple regression model {.inverse .note}
+
+{{< include _033-simple-reg.qmd >}}
+
+# [Ex.]{.ex} [Effect of police on crime]{.hi-white} {.inverse}
+
+{{< include _034-exreg.qmd >}}
+
+# Ordinary least squares {.inverse .note}
+
+{{< include _035-ols.qmd >}}
+
+# Coefficient interpretation {.inverse .note}
+
+{{< include _036-interpretation.qmd >}}
+
+# [OLS]{.hi-white} [Ex.]{.ex} {.inverse}
+
+{{< include _037-ex.qmd >}}
+
+<!-- TODO: Make points bigger on all scatter plots to make it easier to see in slides -->
+
+
+```{r}
+#| include: false
+#| echo: false
+#| eval: false
+
+renderthis::to_pdf(from = "./slides/003-ols/030-main.html", to = "./slides/003-ols/030-main.pdf")
+```

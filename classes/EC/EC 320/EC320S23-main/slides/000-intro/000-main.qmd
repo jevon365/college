@@ -1,0 +1,48 @@
+---
+title: "Introduction and Overview"
+subtitle: "EC 320, Set 01"
+author: Andrew Dickinson
+date: last-modified
+date-format: "Spring YYYY"
+format: 
+  revealjs:
+    theme: [default, ../styles.scss]
+    slide-number: true
+    footer: "EC320, Set 01 | Introduction and Overview"
+    preview-links: auto
+    code-fold: FALSE
+title-slide-attributes: 
+  data-background-position: left
+---
+
+# Prologue{.inverse .note}
+
+---
+
+{{< include _001-prologue.qmd >}}
+
+# Causal identification {.inverse .note}
+
+{{< include _002-causation.qmd >}}
+
+# EC 320 {.inverse .note}
+
+{{< include _003-syllabus.qmd >}}
+
+# [R]{.mono .huge} {.inverse}
+
+{{< include _004-R.qmd >}}
+
+# Chat GPT {.inverse .note}
+
+{{< include _005-GPT.qmd >}}
+
+# Next class: Statistics review {.inverse .note}
+
+
+```{r}
+#| include: false
+#| echo: false
+
+renderthis::to_pdf(from = "./slides/000-intro/000-main.html", to = "./slides/000-intro/000-main.pdf")
+```

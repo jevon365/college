@@ -1,0 +1,604 @@
+---
+name: exreg
+---
+
+---
+
+## [Ex.]{.ex} [Effect of police on crime]{.hi}
+
+[Empirical question:]{.note}
+
+: Does the number of on-campus police officers affect campus crime rates? If so, by how much?
+
+. . .
+
+<br>
+
+Always plot your data first
+
+---
+
+## 
+
+```{r}
+#| echo: false
+#| fig.height: 5.75
+
+data %>% 
+  ggplot(aes(x = police, y = crime)) +
+    geom_point(color = hi) +
+    mytheme_s +
+    xlab("Police per 1000 students") + 
+    ylab("Crimes per 1000 students")
+```
+
+---
+
+## [Ex.]{.ex} [Effect of police on crime]{.hi}
+
+The scatter plot suggest that a _weak_ positive relationship exists
+
+- A sample correlation of 0.14 confirms this
+
+<br>
+
+. . . 
+
+_But correlation does not imply causation_
+
+. . .
+
+<br>
+
+Lets estimate a statistical model 
+
+---
+
+## [Ex.]{.ex} [Effect of police on crime]{.hi}
+
+We express the relationship between a [explained variable]{.hp} and an [explanatory variable]{.hii} as linear:
+
+$$
+{\color{#81A1C1} \text{Crime}_i} = \beta_1 + \beta_2 {\color{#B48EAD} \text{Police}_i} + u_i.
+$$
+
+- $\beta_1$ is the _intercept_ or constant.
+
+- $\beta_2$ is the _slope coefficient_.
+
+- $u_i$ is an _error term_ or disturbance term.
+
+---
+
+## [Ex.]{.ex} [Effect of police on crime]{.hi}
+
+The [intercept]{.hi-red} tells us the expected value of $\text{Crime}_i$ when $\text{Police}_i = 0$. 
+
+$$
+\text{Crime}_i = {\color{#BF616A} \beta_1} + \beta_2\text{Police}_i + u_i
+$$
+
+Usually not the focus of an analysis.
+
+---
+
+## [Ex.]{.ex} [Effect of police on crime]{.hi}
+
+The [slope coefficient]{.hi-red} tells us the expected change in $\text{Crime}_i$ when $\text{Police}_i$ increases by one. 
+
+$$
+ \text{Crime}_i = \beta_1 + {\color{#BF616A} \beta_2} \text{Police}_i + u_i
+$$
+
+"A one-unit increase in $\text{Police}_i$ is associated with a $\color{#BF616A}{\beta_2}$-unit increase in $\text{Crime}_i$."
+
+. . .
+
+Interpretation of this parameter is [crucial]{.hi}
+
+. . .
+
+Under certain (strong) assumptions^[Assumptions regarding the error term], $\color{#BF616A}{\beta_2}$ is the _effect of_ $X_i$ _on_ $Y_i$.
+
+- Otherwise, it's the _association of_ $X_i$ _with_ $Y_i$.
+
+
+---
+
+## [Ex.]{.ex} [Effect of police on crime]{.hi}
+
+The [error term]{.hi-red} reminds us that $\text{Police}_i$ does not perfectly explain $Y_i$. 
+
+$$
+ \text{Crime}_i = \beta_1 + \beta_2\text{Police}_i + {\color{#BF616A} u_i}
+$$
+
+Represents all other factors that explain $\text{Crime}_i$.
+
+- Useful mnemonic: pretend that $u$ stands for *"unobserved"* or *"unexplained."*
+
+
+---
+
+## [Ex.]{.ex} [Effect of police on crime]{.hi}
+
+How might we apply the simple linear regression model to our question about the effect of on-campus police on campus crime?
+
+$$
+ \text{Crime}_i = \beta_1 + \beta_2\text{Police}_i + u_i.
+$$
+
+- $\beta_1$ is the crime rate for colleges without police.
+- $\beta_2$ is the increase in the crime rate for an additional police officer per 1000 students.
+
+---
+
+## [Ex.]{.ex} [Effect of police on crime]{.hi}
+
+How might we apply the simple linear regression model to our question?
+
+$$
+ \text{Crime}_i = \beta_1 + \beta_2\text{Police}_i + u_i
+$$
+
+$\beta_1$ and $\beta_2$ are the unobserved population parameters we want
+
+. . .
+
+<br>
+
+[We estimate]{.hii}
+
+- $\hat{\beta_1}$ and $\hat{\beta_2}$ generate predictions of $\text{Crime}_i$ called $\widehat{\text{Crime}_i}$. 
+
+- We call the predictions of the dependent variable [fitted values.]{.hi}
+
+. . .
+
+- Together, these trace a line: $\widehat{\text{Crime}_i} = \hat{\beta_1} + \hat{\beta_2}\text{Police}_i$.
+
+---
+
+##
+
+::: {.vertical-center}
+So, the question becomes, _how do I pick $\hat{\beta_1}$ and $\hat{\beta_2}$_
+:::
+
+---
+
+##
+
+[Let's take some guesses: ${\color{#ffffff} \hat{\beta_1} = 60}$]{.fragment}
+
+```{r}
+#| echo: false
+#| fig.height: 5.75
+
+data %>% 
+  ggplot(aes(x = police, y = crime)) +
+    geom_point(color = hi) +
+    mytheme_s +
+    coord_fixed() +
+    coord_cartesian(xlim = c(0,7), ylim = c(0,75)) +
+    xlab("Police per 1000 students") + 
+    ylab("Crimes per 1000 students")
+```
+
+<br>
+
+---
+
+## {data-visibility="uncounted"}
+
+Let's take some guesses: $\hat{\beta_1} = 60$ and $\hat{\beta_2}=-7$
+
+```{r}
+#| echo: false
+#| fig.height: 5.75
+
+y_hat <- function(x, b0, b1) {b0 + b1 * x}
+# Define line's parameters
+b0 <- 60
+b1 <- -7
+
+data %>% 
+  ggplot(aes(x = police, y = crime)) +
+    geom_point(color = hi) +
+    geom_abline(intercept = b0, slope = b1, color = hp, size = 1.25) +
+    coord_fixed() +
+    coord_cartesian(xlim = c(0,7), ylim = c(0,75)) +
+    mytheme_s +
+    xlab("Police per 1000 students") + 
+    ylab("Crimes per 1000 students")
+```
+
+[Does this line represent the data well?]{.fragment}
+
+---
+
+## {data-visibility="uncounted"}
+
+Let's take some guesses: $\hat{\beta_1} = 30$ and $\hat{\beta_2}=0$
+
+```{r}
+#| echo: false
+#| fig.height: 5.75
+
+y_hat <- function(x, b0, b1) {b0 + b1 * x}
+# Define line's parameters
+b0 <- 30
+b1 <- 0
+
+data %>% 
+  ggplot(aes(x = police, y = crime)) +
+    geom_point(color = hi) +
+    geom_abline(intercept = b0, slope = b1, color = hp, size = 1.25) +
+    coord_fixed() +
+    coord_cartesian(xlim = c(0,7), ylim = c(0,75)) +
+    mytheme_s +
+    xlab("Police per 1000 students") + 
+    ylab("Crimes per 1000 students")
+```
+
+What about this one?
+
+
+---
+
+## {data-visibility="uncounted"}
+
+Let's take some guesses: $\hat{\beta_1} = 15.6$ and $\hat{\beta_2}=7.94$
+
+```{r}
+#| echo: false
+#| fig.height: 5.75
+
+y_hat <- function(x, b0, b1) {b0 + b1 * x}
+# Define line's parameters
+b0 <- 15.6
+b1 <- 7.94
+
+data %>% 
+  ggplot(aes(x = police, y = crime)) +
+    geom_point(color = hi) +
+    geom_abline(intercept = b0, slope = b1, color = hp, size = 1.25) +
+    coord_fixed() +
+    coord_cartesian(xlim = c(0,7), ylim = c(0,75)) +
+    mytheme_s +
+    xlab("Police per 1000 students") + 
+    ylab("Crimes per 1000 students")
+```
+
+Or this one?
+
+---
+
+## Residuals
+
+Using $\hat{\beta_1}$ and $\hat{\beta_2}$ to make $\hat{Y_i}$ generates misses.
+
+We call these misses [residuals:]{.hi}
+
+$$
+{\color{#BF616A} \hat{u}_i} = {\color{#BF616A}Y_i - \hat{Y_i}}.
+$$
+
+[AKA]{.note} ${\color{#BF616A}e_i}$.
+
+---
+
+## {data-visibility="uncounted"}
+
+$\hat{\beta_1} = 15.4$ and $\hat{\beta_2}=7.94$
+
+```{r}
+#| echo: false
+#| fig.height: 5.75
+
+y_hat <- function(x, b0, b1) {b0 + b1 * x}
+# Define line's parameters
+b0 <- 15.6
+b1 <- 7.94
+
+data %>% 
+  ggplot(aes(x = police, y = crime)) +
+    geom_point(color = hi) +
+    geom_abline(intercept = b0, slope = b1, color = hp, size = 1.25) +
+    geom_segment(aes(x = police, xend = police, y = crime, yend = y_hat(police, b0, b1)), color = hired, 
+               size = 0.5, alpha = 1) +
+    coord_fixed() +
+    coord_cartesian(xlim = c(0,7), ylim = c(0,75)) +
+    mytheme_s +
+    xlab("Police per 1000 students") + 
+    ylab("Crimes per 1000 students")
+```
+
+Does this line represent the data well?
+
+---
+
+## Residuals
+
+_What is we picked an estimator that minimizes the residuals?_
+
+_Why not minimize_ 
+
+$$
+\sum_{i=1}^n \hat{u}_i^2
+$$
+
+_so that the estimator makes fewer big misses?_
+
+. . .
+
+This estimator, the [residual sum of squares]{.note} ([RSS]{.hii}), is convenient because _squared numbers are never negative_ so we can minimize an absolute sum of the residuals
+
+---
+
+##
+
+[RSS]{.hii} gives bigger penalties to bigger residuals.
+
+```{r}
+#| echo: false
+#| fig.height: 5.75
+
+y_hat <- function(x, b0, b1) {b0 + b1 * x}
+# Define line's parameters
+b0 <- 15.6
+b1 <- 7.94
+
+data %>% 
+  ggplot(aes(x = police, y = crime)) +
+    geom_point(color = hi) +
+    geom_abline(intercept = b0, slope = b1, color = hp, size = 1.25) +
+    geom_segment(aes(x = police, xend = police, y = crime, yend = y_hat(police, b0, b1), size =  (crime - y_hat(police, b0, b1))^2), color = hii, alpha = 0.5) +
+    # coord_fixed() +
+    coord_cartesian(xlim = c(0,7), ylim = c(0,75)) +
+    scale_size(range = c(0.001,4)) +
+    # scale_color_continuous() +
+    mytheme_s +
+    xlab("Police per 1000 students") + 
+    ylab("Crimes per 1000 students") +
+    theme(
+      legend.position = 'none'
+    )
+```
+
+---
+
+## {data-visibility="uncounted"}
+
+[RSS]{.hii} gives bigger penalties to bigger residuals.
+
+```{r}
+#| echo: false
+#| fig.height: 5.75
+
+y_hat <- function(x, b0, b1) {b0 + b1 * x}
+# Define line's parameters
+b0 <- 30
+b1 <- 0
+
+data %>% 
+  ggplot(aes(x = police, y = crime)) +
+    geom_point(color = hi) +
+    geom_abline(intercept = b0, slope = b1, color = hp, size = 1.25) +
+    geom_segment(aes(x = police, xend = police, y = crime, yend = y_hat(police, b0, b1), size =  (crime - y_hat(police, b0, b1))^2), color = hii, alpha = 0.5) +
+    # coord_fixed() +
+    coord_cartesian(xlim = c(0,7), ylim = c(0,75)) +
+    scale_size(range = c(0.001,4)) +
+    # scale_color_continuous() +
+    mytheme_s +
+    xlab("Police per 1000 students") + 
+    ylab("Crimes per 1000 students") +
+    theme(
+      legend.position = 'none'
+    )
+```
+
+
+---
+
+## {data-visibility="uncounted"}
+
+[RSS]{.hii} gives bigger penalties to bigger residuals.
+
+```{r}
+#| echo: false
+#| fig.height: 5.75
+
+y_hat <- function(x, b0, b1) {b0 + b1 * x}
+# Define line's parameters
+b0 <- 60
+b1 <- -7
+
+data %>% 
+  ggplot(aes(x = police, y = crime)) +
+    geom_point(color = hi) +
+    geom_abline(intercept = b0, slope = b1, color = hp, size = 1.25) +
+    geom_segment(aes(x = police, xend = police, y = crime, yend = y_hat(police, b0, b1), size =  (crime - y_hat(police, b0, b1))^2), color = hii, alpha = 0.5) +
+    # coord_fixed() +
+    coord_cartesian(xlim = c(0,7), ylim = c(0,75)) +
+    scale_size(range = c(0.001,4)) +
+    # scale_color_continuous() +
+    mytheme_s +
+    xlab("Police per 1000 students") + 
+    ylab("Crimes per 1000 students") +
+    theme(
+      legend.position = 'none'
+    )
+```
+
+---
+
+## Minimizing RSS
+
+We could test thousands of guesses of $\beta_1$ and $\beta_2$ and pick the pair the has the smallest RSS
+
+. . .
+
+What if we did that. [Let's write a loop that guesses $\beta_1$ and $\beta_2$ [100,000 times]{.hi} and collect the [RSS]{.hii} for each guess.]{.fragment}
+
+[Then we plot it in three dimensions: $\beta_1$ ([x]{.mono}), $\beta_2$ ([y]{.mono}), [RSS]{.hii} ([z]{.mono})]{.fragment}
+
+---
+
+##
+
+```{r}
+#| label: foc-sim
+#| cache: true
+#| echo: false
+
+
+# Create a function that predicts y_hat
+y_hat <- function(x, b0, b1) {b0 + b1 * x}
+
+# Define number of draws
+n = 1e5
+
+# Define a range that the line's parameters can take
+b0_range = c(-100, 100)
+b1_range = c(-100, 100)
+# Create 100,000 draws from that distribution
+b0_v = runif(n, b0_range[1], b0_range[2]) %>% as.list()
+b1_v = runif(n, b1_range[1], b1_range[2]) %>% as.list()
+
+# Run the simulation in parallel
+rss_sim = parallel::mcmapply(FUN = function(x,y) {
+
+    # Calculate residuals
+    resid = data$crime - y_hat(data$police, x, y)
+    # Square residuals
+    resid_sq = resid^2
+    # Sum for RSS
+    rss = fsum(resid_sq)
+    # Create data.table of parameters + rss
+    dt = data.table(
+      b0 = x,
+      b1 = y,
+      rss = rss)
+    # Return data.table list
+    return(dt)
+
+    }, b0_v, b1_v, SIMPLIFY = FALSE, mc.cores = 6
+  ) %>% rbindlist()
+
+# Create rank variable for color
+setorder(rss_sim, rss)
+rss_sim[, rank := .I]
+
+rss_range = c(rss_sim[1] - 10000, rss_sim[n] + 10000)
+
+# Create a plane to simulate an FOC
+# Find the "optimal" point
+min_point <- rss_sim[1]
+# Create a grid which draws the surface of the optimal plane
+grid_size <- 100
+b0_range <- seq(min(rss_sim$b0), max(rss_sim$b0), length.out = grid_size)
+b1_range <- seq(min(rss_sim$b1), max(rss_sim$b1), length.out = grid_size)
+b0_b1_grid <- expand.grid(b0 = b0_range, b1 = b1_range)
+b0_b1_grid$z <- min_point$rss
+
+```
+
+Simulated RSS across $\beta_1, \beta_2 \sim \text{uniform}(-100, 100)$
+
+```{r}
+#| label: foc-3d-00
+#| echo: false
+#| fig.height: 7.5
+#| cache: true
+#| dependson: foc-sim
+
+plot_ly(
+  type = "scatter3d",
+  x = rss_sim$b1,
+  y = rss_sim$b0,
+  z = rss_sim$rss,
+  mode = "markers",
+  size = 1,
+  color = rss_sim$rank,
+  colors = colorRamp(viridis::magma(8) %>% rev()),
+) %>%
+layout(scene = list(
+  yaxis = list(title = "b0", range = b0_range),
+  xaxis = list(title = "b1", range = b1_range),
+  zaxis = list(title = "RSS", range = rss_range)
+)) %>% hide_colorbar()
+```
+
+
+---
+
+##
+
+Simulated RSS across $\beta_1, \beta_2 \sim \text{uniform}(-100, 100)$ _(zoomed in)_
+
+```{r}
+#| label: foc-3d-01
+#| echo: false
+#| fig.height: 7.5
+#| cache: true
+#| dependson: foc-sim
+plot_ly(
+  type = "scatter3d",
+  x = rss_sim$b1,
+  y = rss_sim$b0,
+  z = rss_sim$rss,
+  mode = "markers",
+  size = 1,
+  color = rss_sim$rank,
+  colors = colorRamp(viridis::magma(8) %>% rev()),
+) %>%
+  add_trace(
+    type = "surface",
+    x = b1_range,
+    y = b0_range,
+    z = matrix(b0_b1_grid$z, nrow = grid_size, ncol = grid_size),
+    surfacecolor = matrix(higrey, nrow = grid_size, ncol = grid_size),  # Set the color of the plane
+    opacity = 0.25,
+    showlegend = FALSE  # Hide legend for this trace
+    # name = "Optimal plane"
+  ) %>%
+  layout(scene = list(
+  yaxis = list(title = "b0", range = b0_range),
+  xaxis = list(title = "b1", range = b1_range),
+  zaxis = list(title = "RSS", range = c(0, 400000))
+)) %>% hide_colorbar()
+```
+
+---
+
+## Minimizing RSS
+
+We could test thousands of guesses of $\beta_1$ and $\beta_2$ and pick the pair the has the smallest RSS
+
+What if we did that. Let's write a loop that guesses $\beta_1$ and $\beta_2$ [100,000 times]{.hi} and collect the [RSS]{.hii} for each guess.
+
+Then we plot it in three dimensions: $\beta_1$ ([x]{.mono}), $\beta_2$ ([y]{.mono}), [RSS]{.hii} ([z]{.mono})
+
+. . .
+
+<br>
+<br>
+<br>
+
+Or... [We could just do a little math]{.fragment}
+
+<!-- ---
+
+## Running Regressions
+
+We estimate the regression coefficients using an estimator called .hi[Ordinary Least Squares] (OLS).
+
+- Picks estimates that make $\hat{Y_i}$ as close as possible to $Y_i$ given the information we have on $X$ and $Y$.
+
+- The residual sum of squares (RSS), $\sum_{i=1}^n (Y_i - \hat{Y_i})^2$, gives us an idea of how accurate our model is. 
+
+- .hi[OLS] minimizes this sum. 
+ 
+- We will dive into the details next class. -->
+

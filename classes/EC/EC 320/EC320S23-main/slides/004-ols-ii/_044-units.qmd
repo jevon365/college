@@ -1,0 +1,23 @@
+---
+name: units
+---
+
+---
+
+## PS03: Demeaning
+
+Suppose we have the following model:
+
+$$
+Y_i = \beta_0 + \beta_1 X_i + u_i
+$$
+
+Before running a regression of $Y_i$ on $X_i$, you decided to demean each variable by subtracting off the mean from each observation. This gave you $\tilde{Y_i} = Y_i - \bar{Y}$ and $\tilde{X_i} = X_i - \bar{X}$. The estimation equation becomes:
+
+$$
+\tilde{Y_i} = \alpha_0 + \alpha_1 \tilde{X_i} + v_i
+$$
+
+where $v_i = u_i - \bar{u_i}$.
+
+[Show:]{.note} $\alpha_0 = 0$ and $\alpha_1 = \beta_1$
